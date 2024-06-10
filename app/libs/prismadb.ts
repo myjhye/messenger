@@ -1,6 +1,6 @@
 // prisma 인스턴스 전역 사용
 
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client"
 
 declare global {
     var prisma: PrismaClient | undefined;
