@@ -9,6 +9,8 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuthSocialButton from "./AuthSocialButton";
 import { BsGithub, BsGoogle } from "react-icons/bs";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 interface AuthFormProps {
     variant: 'LOGIN' | 'REGISTER';
@@ -44,13 +46,28 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
-
+        // 회원가입
         if (variant === 'REGISTER') {
             axios.post('/api/register', data)
+                .catch(() => toast.error('Something went wrong!'))
+                .finally(() => setIsLoading(false))
         }
-
+        // 로그인
         if (variant === 'LOGIN') {
-
+            signIn('credentials', {
+                ...data,
+                redirect: false,
+            })
+            // callback: 반환하는 객체
+            .then((callback) => {
+                if (callback?.error) {
+                    toast.error('Invalid credentials');
+                }
+                if (callback?.ok && !callback?.error) {
+                    toast.success('Logged In!')
+                }
+            })
+            .finally(() => setIsLoading(false))
         }
     }
 
