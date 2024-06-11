@@ -1,4 +1,4 @@
-// NextAuth으로 인증 설정, 인증 요청(GET, POST) 처리
+// 로그인
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions } from "next-auth";
