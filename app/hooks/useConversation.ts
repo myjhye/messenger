@@ -1,4 +1,5 @@
 // 현재 url의 파라미터에서 conversationId를 추출해 전역 사용
+// consersationId 유무에 따른 isOpen 상태 true/false 전역 사용
 
 import { useParams } from "next/navigation"
 import { useMemo } from "react";
@@ -10,7 +11,7 @@ export default function useConversation() {
     // useMemo: params.conversationId 값이 변경될 때만 재계산
     const conversationId = useMemo(() => {
         if (!params?.conversationId) {
-            return '';            
+            return '';
         }
 
         return params.conversationId as string;
