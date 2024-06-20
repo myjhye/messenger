@@ -1,3 +1,5 @@
+// 대화 헤더 - 대화 제목, 상대방 아바타, 상태 정보(active)
+
 "use client"
 
 import Avatar from "@/app/components/Avatar"

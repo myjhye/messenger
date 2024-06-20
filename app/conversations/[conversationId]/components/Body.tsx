@@ -1,3 +1,5 @@
+// 대화 본문
+
 "use client"
 
 export default function Body() {

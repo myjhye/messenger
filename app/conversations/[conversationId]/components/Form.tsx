@@ -1,3 +1,5 @@
+// 메세지 입력 폼
+
 "use client"
 
 import useConversation from "@/app/hooks/useConversation"

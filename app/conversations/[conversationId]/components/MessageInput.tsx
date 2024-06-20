@@ -1,3 +1,5 @@
+// 메세지 입력 필드
+
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 
 interface MessageInputProps {

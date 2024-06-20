@@ -1,3 +1,5 @@
+// 대화 페이지 레이아웃
+
 import getConversationById from "@/app/actions/getConversationById";
 import getMessages from "@/app/actions/getMessages";
 import EmptyState from "@/app/components/EmptyState";
