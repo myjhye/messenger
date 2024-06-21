@@ -12,6 +12,7 @@ export default withAuth({
 export const config = {
     // 이 패턴에 매칭되는 모든 경로에 미들웨어 적용
     matcher: [
-        "/users/:path*"
+        "/users/:path*",
+        "/conversations/:path*",
     ]
 }
