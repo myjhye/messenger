@@ -27,7 +27,7 @@ export default function UserBox({ data }: UserBoxProps) {
         })
         .then((data) => {
             // 대화 생성 후 해당 대화로 이동
-            router.push(`/conversation/${data.data.id}`)
+            router.push(`/conversations/${data.data.id}`)
         })
         .finally(() => setIsLoading(false));
     }, [data, router]);
