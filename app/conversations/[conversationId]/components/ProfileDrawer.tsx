@@ -1,3 +1,6 @@
+// 대화 세부 정보 보여주는 사이드 패널
+// 대화 삭제 버튼으로 삭제
+
 import useOtherUser from "@/app/hooks/useOtherUser";
 import { Conversation, User } from "@prisma/client";
 import { Fragment, useMemo, useState } from "react";
@@ -17,17 +20,22 @@ interface ProfileDrawerProps {
 
 export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerProps) {
 
+    // 대화에서 현재 사용자 외 다른 사용자 가져오기
     const otherUser = useOtherUser(data);
+    // 삭제 확인 모달
     const [confirmOpen, setConfirmOpen] = useState(false);
 
+    // 다른 사용자의 가입 날짜 포맷팅
     const joinedDate = useMemo(() => {
         return format(new Date(otherUser.createdAt), 'PP');
     }, [otherUser.createdAt]);
 
+    // 대화 제목 또는 다른 사용자 이름
     const title = useMemo(() => {
         return data.name || otherUser.name;
     }, [data.name, otherUser.name]);
 
+    // 그룹 대화인 경우 멤버 수 표시 / 그룹 대화가 아니면 Active 표시
     const statusText = useMemo(() => {
         if (data.isGroup) {
             return `${data.users.length} members`;

@@ -1,3 +1,5 @@
+// 대화 삭제 확인 모달
+
 "use client"
 
 import Button from "@/app/components/Button";
@@ -21,13 +23,18 @@ export default function ConfirmModal({ isOpen, onClose }: ConfirmModalProps) {
     const { conversationId } = useConversation();
     const [isLoading, setIsLoading] = useState(false);
 
+    // 대화 삭제
     const onDelete = useCallback(() => {
         setIsLoading(true);
 
+        // 대화 삭제 요청 
         axios.delete(`/api/conversations/${conversationId}`)
             .then(() => {
+                // 모달 닫기
                 onClose();
+                // 대화 목록 페이지로 이동
                 router.push('/conversations');
+                // 페이지 새로고침
                 router.refresh();
             })
             .catch(() => toast.error('Something went wrong!'))

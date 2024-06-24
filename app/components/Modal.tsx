@@ -1,3 +1,5 @@
+// 재사용 가능한 모달
+
 "use client"
 
 import { Dialog, Transition } from "@headlessui/react";
@@ -56,6 +58,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
                                         <IoClose className="h-6 w-6" />
                                     </button> 
                                 </div>
+                                {/* 모달 창 내용 */}
                                 {children}
                             </Dialog.Panel>
                         </Transition.Child>
