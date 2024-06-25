@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 interface ConversationBoxProps {
     // 대화 데이터
@@ -17,6 +18,7 @@ interface ConversationBoxProps {
     selected: boolean,
 };
 
+// props: ConversationList
 export default function ConversationBox({ data, selected }: ConversationBoxProps) {
     // 상대방 대화 가져오기
     const otherUser = useOtherUser(data);
@@ -83,8 +85,12 @@ export default function ConversationBox({ data, selected }: ConversationBoxProps
             onClick={handleClick}
             className={clsx(`w-full relative flex items-center space-x-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer p-3`, selected ? 'bg-neutral-100' : 'bg-white')}
         >
-            {/* 대화에서 상대방 아바타 */}
-            <Avatar user={otherUser} />
+            {data.isGroup ? (
+                <AvatarGroup users={data.users} />
+            ) : (
+                // 대화에서 상대방 아바타
+                <Avatar user={otherUser} />
+            )}
             <div className="min-w-0 flex-1">
                 <div className="focus-outline-none">
                     <div className="flex justify-between items-center mb-1">
