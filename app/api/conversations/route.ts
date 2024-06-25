@@ -1,5 +1,5 @@
-// 새 대화 생성, 기존 대화 조회
-// 그룹 대화, 개인 대화
+// 개인 대화 생성, 조회
+// 그룹 대화 생성
 
 import getCurrentUser from "@/app/actions/getCurrentUser"
 import { NextResponse } from "next/server"

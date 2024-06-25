@@ -1,3 +1,7 @@
+// 대화 목록
+// 사용자 목록
+// 사이드바
+
 import React from "react";
 import Sidebar from "../components/sidebar/Sidebar";
 import ConversationList from "./components/ConversationList";

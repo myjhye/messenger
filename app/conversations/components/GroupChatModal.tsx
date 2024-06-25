@@ -1,3 +1,5 @@
+// 새 그룹 대화를 생성하는 모달
+
 "use client"
 
 import Button from "@/app/components/Button";
