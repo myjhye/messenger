@@ -6,6 +6,8 @@ import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useState } from "react";
+import ImageModal from "./ImageModal";
 
 interface MessageBoxProps {
     data: FullMessageType;
@@ -15,6 +17,7 @@ interface MessageBoxProps {
 export default function MessageBox({ data, isLast }: MessageBoxProps) {
 
     const session = useSession();
+    const [imageModalOpen, setImageModalOpen] = useState(false);
 
     // 메세지 작성자 여부
     const isOwn = session?.data?.user?.email === data?.sender?.email;
@@ -59,8 +62,14 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
                     </div>
                 </div>
                 <div className={message}>
+                    <ImageModal 
+                        src={data.image}
+                        isOpen={imageModalOpen}
+                        onClose={() => setImageModalOpen(false)}
+                    />
                     {data.image ? (
-                        <Image 
+                        <Image
+                            onClick={() => setImageModalOpen(true)} 
                             alt="Image"
                             height="288"
                             width="288"
