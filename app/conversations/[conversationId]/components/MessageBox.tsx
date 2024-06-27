@@ -31,7 +31,7 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
         // 이름을 콤마로 구분해 문자열로 만들기
         .join(', ');
 
-
+        
     // 메세지 컨테이너 클래스
     const container = clsx("flex gap-3 p-4", isOwn && "justify-end");
 

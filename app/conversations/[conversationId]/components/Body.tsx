@@ -1,62 +1,79 @@
 // 대화 본문
 
-"use client"
+'use client';
 
-import useConversation from "@/app/hooks/useConversation";
-import { FullMessageType } from "@/app/types";
-import { useEffect, useRef, useState } from "react";
-import MessageBox from "./MessageBox";
 import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+
 import { pusherClient } from "@/app/libs/pusher";
+import useConversation from "@/app/hooks/useConversation";
+import MessageBox from "./MessageBox";
+import { FullMessageType } from "@/app/types";
 import { find } from "lodash";
 
 interface BodyProps {
-    initialMessages: FullMessageType[],
+  initialMessages: FullMessageType[];
 }
 
-export default function Body({ initialMessages }: BodyProps) {
-    const [messages, setMessages] = useState(initialMessages);
-    const bottomRef = useRef<HTMLDivElement>(null);
+export default function Body({ initialMessages = [] }: BodyProps) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<FullMessageType[]>(initialMessages);
+  
+  const { conversationId } = useConversation();
 
-    const { conversationId } = useConversation();
+  useEffect(() => {
+    axios.post(`/api/conversations/${conversationId}/seen`);
+  }, [conversationId]);
 
-    useEffect(() => {
-        axios.post(`/api/conversations/${conversationId}/seen`);
-    }, [conversationId]);
+  useEffect(() => {
+    pusherClient.subscribe(conversationId)
+    bottomRef?.current?.scrollIntoView();
 
-    useEffect(() => {
-        pusherClient.subscribe(conversationId);
-        bottomRef?.current?.scrollIntoView();
+    const messageHandler = (message: FullMessageType) => {
+      axios.post(`/api/conversations/${conversationId}/seen`);
 
-        const messageHandler = (newMessage: FullMessageType) => {
-            setMessages((current) => {
-                if (find(current, { id: newMessage.id })) {
-                    return current;
-                }
-                return [...current, newMessage];
-            });
-            bottomRef?.current?.scrollIntoView();
-        };
+      setMessages((current) => {
+        if (find(current, { id: message.id })) {
+          return current;
+        }
 
-        pusherClient.bind('message:new', messageHandler);
+        return [...current, message];
+      });
+      
+      bottomRef?.current?.scrollIntoView();
+    };
 
-        return () => {
-            console.log('Unsubscribing from Pusher channel:', conversationId);
-            pusherClient.unsubscribe(conversationId);
-            pusherClient.unbind('message:new', messageHandler);
-        };
-    }, [conversationId]);
+    const updateMessageHandler = (newMessage: FullMessageType) => {
+      setMessages((current) => current.map((currentMessage) => {
+        if (currentMessage.id === newMessage.id) {
+          return newMessage;
+        }
+  
+        return currentMessage;
+      }));
+    };
+  
 
-    return (
-        <div className="flex-1 overflow-y-auto">
-            {messages.map((message, i) => (
-                <MessageBox 
-                    isLast={i === messages.length - 1}
-                    key={message.id}
-                    data={message}
-                />
-            ))}
-            <div ref={bottomRef} />
-        </div>
-    );
+    pusherClient.bind('messages:new', messageHandler)
+    pusherClient.bind('message:update', updateMessageHandler);
+
+    return () => {
+      pusherClient.unsubscribe(conversationId)
+      pusherClient.unbind('messages:new', messageHandler)
+      pusherClient.unbind('message:update', updateMessageHandler)
+    };
+  }, [conversationId]);
+
+  return ( 
+    <div className="flex-1 overflow-y-auto">
+      {messages.map((message, i) => (
+        <MessageBox 
+          isLast={i === messages.length - 1} 
+          key={message.id} 
+          data={message}
+        />
+      ))}
+      <div ref={bottomRef} />
+    </div>
+  );
 }
