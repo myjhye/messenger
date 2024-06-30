@@ -3,6 +3,7 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
 interface IParams {
     conversationId?: string;
@@ -53,6 +54,12 @@ export async function DELETE(
                 }
             }
         });
+
+        existingConversation.users.forEach((user) => {
+            if (user.email) {
+                pusherServer.trigger(user.email, 'conversation:remove', existingConversation)
+            }
+        })
 
         // 삭제된 대화 반환
         return NextResponse.json(deletedConversation);
