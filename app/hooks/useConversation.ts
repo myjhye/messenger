@@ -19,8 +19,10 @@ export default function useConversation() {
 
     // conversationId 존재 여부에 따라 isOpen 설정
     // !!conversationId: conversationId이 빈 문자열이 아닌 경우 true 반환
-    const isOpen = useMemo(() => !!conversationId, [conversationId]);
-
+    const isOpen = useMemo(() => {
+        return conversationId ? true : false;
+    }, [conversationId]);
+    
     return useMemo(() => ({
         isOpen,
         conversationId,

@@ -5,13 +5,11 @@ import bcrypt from "bcrypt";
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
 
-export async function POST( 
-    request: Request
-) {
+export async function POST(request: Request) {
 
     try {
-        // 요청에서 email, name, password 추출
         const body = await request.json();
+        // 요청에서 email, name, password 추출
         const { email, name, password } = body;
 
         // 하나라도 입력 없으면 에러

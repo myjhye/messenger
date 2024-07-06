@@ -1,4 +1,4 @@
-// 소셜 로그인 버튼
+// 소셜 로그인 버튼 (재사용)
 
 import { IconType } from "react-icons"
 

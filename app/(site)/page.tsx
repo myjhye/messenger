@@ -25,7 +25,7 @@ export default function Home() {
                     {variant === 'LOGIN' ? 'Sign In' : 'Create an account'}
                 </h2>
             </div>
-            {/* auth 페이지 (회원가입, 로그인) */}
+            {/* auth 컴포넌트 (회원가입, 로그인) */}
             <AuthForm 
                 variant={variant}
                 setVariant={setVariant}

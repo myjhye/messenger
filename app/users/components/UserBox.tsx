@@ -13,6 +13,7 @@ interface UserBoxProps {
     data: User
 }
 
+// props: UserList
 export default function UserBox({ data }: UserBoxProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);

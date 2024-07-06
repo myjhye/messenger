@@ -1,4 +1,4 @@
-// 대화 내에서 현재 로그인한 사용자 제외한 사용자 목록 조회
+// '대화 내에서' 현재 로그인한 사용자 제외한 사용자 목록 조회
 // 좌측 사이드바 대화 항목의 상대방 정보 표시
 
 import { User } from "@prisma/client";
@@ -16,7 +16,9 @@ const useOtherUser = (conversation: FullConversationType | { users: User[] }) =>
 
         return otherUser[0];
 
-    }, [session?.data?.user?.email, conversation.users]);
+    }, [session?.data?.user?.email, 
+        conversation.users
+    ]);
 
     return otherUser;
 };

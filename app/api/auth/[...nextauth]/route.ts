@@ -1,4 +1,5 @@
-// 로그인
+// 로그인 (인증 요청)
+// 인증 제공자 설정(깃허브, 구글, 일반 로그인)
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions } from "next-auth";
@@ -14,17 +15,19 @@ export const authOptions: AuthOptions = {
     // PrismaAdapter에 prisma 인스턴스 전달(auth, prisma 통합 목적)
     adapter: PrismaAdapter(prisma),
 
-    // auth 수단
+    // 인증 제공자 설정
     providers: [
+        // 1.
         GithubProvider({
             clientId: process.env.GITHUB_ID as string,
             clientSecret: process.env.GITHUB_SECRET as string,
         }),
+        // 2.
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
-        // 이메일, 비밀번호 기반
+        // 3. 이메일, 비밀번호 기반의 인증 제공자 설정
         CredentialsProvider({
             name: 'credentials',
             credentials: {
@@ -40,11 +43,12 @@ export const authOptions: AuthOptions = {
 
             // auth
             async authorize(credentials) {
+                // 이메일과 비밀번호가 제공되지 않은 경우 오류 발생
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error('Invalid credentials');
                 }
 
-                // user 테이블에서 사용자 찾기
+                // prisma의 user 스키마에서 사용자 찾기
                 const user = await prisma.user.findUnique({
                     where: {
                         email: credentials.email

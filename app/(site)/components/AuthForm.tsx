@@ -25,12 +25,14 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    // 로그인 된 상태면 /users 경로로 이동
     useEffect(() => {
         if (session?.status === 'authenticated') {
             router.push('/users')
         }
     }, [session?.status, router]);
 
+    // 로그인, 회원가입 상태 토글
     const toggleVariant = useCallback(() => {
         if (variant === 'LOGIN') {
             setVariant('REGISTER');
@@ -40,9 +42,13 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     }, [variant]);
 
-    const { 
+    // useForm: 폼 상태, 유효성 검사 관리
+    const {
+        // 유효성 검사
         register, 
+        // 폼 제출 시 호출되는 함수 래핑
         handleSubmit,
+        // 유효성 검사 오류
         formState: {
             errors
         } 
@@ -54,6 +60,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     });
 
+    // 폼 제출 시 호출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
         // 회원가입
@@ -70,6 +77,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                 ...data,
                 redirect: false,
             })
+            // 로그인 요청에 대한 콜백
             // callback: 반환하는 객체
             .then((callback) => {
                 if (callback?.error) {
@@ -83,6 +91,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     }
 
+    // 소셜 로그인 시 호출
     const socialAction = (action: string) => {
         setIsLoading(true);
 

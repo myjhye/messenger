@@ -1,4 +1,4 @@
-// 데이터 입력 칸
+// 입력 필드 (재사용)
 
 "use client";
 
@@ -38,13 +38,18 @@ export default function Input({
                     type={type}
                     autoComplete="id"
                     disabled={disabled}
+                    // id: 입력 필드 고유 식별자 (email, password..)
                     {...register(id, {
                         required: required,
                     })}
                     className={
+                        // form-input: 플러그인 / 일관된 스타일 적용
+                        // clsx로 조건부 클래스를 적용
                         clsx(`form-input block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6`, 
+                        // 오류 발생 시 빨간색 테두리 클래스 적용
                         errors[id] && "focus:ring-rose-500",
-                        disabled && 'opacity-50 cursor-default'
+                        // 비활성화 상태일 경우 불투명도와 커서 스타일 적용  
+                        disabled && 'opacity-50 cursor-default'  
                     )}
                 />
             </div>

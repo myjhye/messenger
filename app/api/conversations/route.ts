@@ -40,24 +40,26 @@ export async function POST(request: Request) {
                                 id: member.value
                             })),
                             {
-                                // 그룹 멤버와 현재 사용자를 대화에 연결
+                                // 현재 사용자도 그룹 멤버로 연결
                                 id: currentUser.id
                             }
                         ]
                     }
                 },
                 include: {
+                    // 포함된 사용자 정보
                     users: true
                 }
             });
 
+            // pusher로 새로운 대화 알림 전송
             newConversation.users.forEach((user) => {
                 if (user.email) {
                     pusherServer.trigger(user.email, 'conversation:new', newConversation);
                 }
             })
 
-            // 생성된 대화 반환
+            // 생성된 대화를 json으로 반환
             return NextResponse.json(newConversation);
         }
 
@@ -99,16 +101,20 @@ export async function POST(request: Request) {
             data: {
                 users: {
                     connect: [
+                        // 현재 사용자 연결
                         { id: currentUser.id },
+                        // 대화 상대방 연결
                         { id: userId }
                     ]
                 }
             },
             include: {
+                // 포함된 사용자 정보
                 users: true
             }
         });
 
+        // pusher로 새로운 대화 알림 전송
         newConversation.users.forEach((user) => {
             if (user.email) {
                 pusherServer.trigger(user.email, 'conversation:new', newConversation);
