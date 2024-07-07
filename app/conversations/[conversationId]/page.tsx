@@ -6,6 +6,7 @@ import EmptyState from "@/app/components/EmptyState";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import Form from "./components/Form";
+import { MessageProvider } from "@/app/context/MessageContext"; // 추가
 
 interface IParams {
     conversationId: string;
@@ -28,11 +29,13 @@ export default async function ConversationId({ params }: { params: IParams }) {
 
     return (
         <div className="lg:pl-80 h-full">
-            <div className="h-full flex flex-col">
-                <Header conversation={conversation} />
-                <Body initialMessages={messages} />
-                <Form />
-            </div>
+            <MessageProvider> {/* MessageProvider로 감쌈 */}
+                <div className="h-full flex flex-col">
+                    <Header conversation={conversation} />
+                    <Body initialMessages={messages} />
+                    <Form />
+                </div>
+            </MessageProvider>
         </div>
-    )
+    );
 }

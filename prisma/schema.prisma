@@ -76,4 +76,6 @@ model Message {
 
   senderId String @db.ObjectId
   sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  edited Boolean  @default(false)
 }
