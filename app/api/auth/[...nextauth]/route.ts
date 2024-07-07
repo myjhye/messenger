@@ -6,7 +6,7 @@ import { AuthOptions } from "next-auth";
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import prisma from "@/app/libs/prismadb";
 import NextAuth from "next-auth/next";
 
@@ -76,7 +76,6 @@ export const authOptions: AuthOptions = {
             }
         })
     ],
-
 
     // 개발 환경에서는 디버그 모드 활성화
     debug: process.env.NODE_ENV === 'development',
