@@ -1,4 +1,4 @@
-// 개별 메세지 박스
+// 개별 대화 항목
 
 "use client";
 
@@ -11,13 +11,15 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import ImageModal from "./ImageModal";
 import { useMessage } from "@/app/context/MessageContext";
+import axios from "axios";
 
 interface MessageBoxProps {
   data: FullMessageType;
   isLast?: boolean;
+  onDelete: (id: string) => void;
 }
 
-export default function MessageBox({ data, isLast }: MessageBoxProps) {
+export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) {
   const session = useSession();
   const { setEditMessage, setEditMessageId } = useMessage();
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -77,6 +79,23 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
     setMenuOpen(false);
   };
 
+  const handleDeleteClick = async () => {
+    try {
+      const response = await axios.delete(`/api/messages/${data.id}`, {
+        data: { conversationId: data.conversationId }
+      });
+      if (response.status === 200) {
+        onDelete(data.id);
+      } else {
+        console.error("Error deleting message: unexpected status", response.status);
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
+    setMenuOpen(false);
+  };
+  
+
   return (
     <div className={container}>
       <div className={avatar}>
@@ -130,13 +149,7 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
                   >
                     수정
                   </button>
-                  <button
-                    className="block w-full px-4 py-2 text-left text-black-700 hover:bg-gray-100"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      // Add your delete logic here
-                    }}
-                  >
+                  <button className="block w-full px-4 py-2 text-left text-black-700 hover:bg-gray-100" onClick={handleDeleteClick}>
                     삭제
                   </button>
                 </div>
