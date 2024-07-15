@@ -19,6 +19,8 @@ interface ProfileDrawerProps {
     }
 }
 
+// props: Header
+// data: 특정 대화 정보
 export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerProps) {
 
     // 대화에서 현재 사용자 외 다른 사용자 가져오기
@@ -190,3 +192,16 @@ export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerPr
         </>
     )
 }
+
+{/*
+
+전체 순서
+1. Transition.Root
+2. Dialog
+3. Transition.Child (1번째: 배경)
+4. 모달 컨테이너 (div 요소들)
+5. Transition.Child (2번째: 모달 패널 전환 애니메이션)
+6. Dialog.Panel
+7. 모달 내부 구조 (div, button, AvatarGroup, Avatar, dl, dt, dd)
+
+*/}

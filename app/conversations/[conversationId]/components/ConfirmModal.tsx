@@ -17,6 +17,7 @@ interface ConfirmModalProps {
     onClose: () => void;
 };
 
+// props: ProfileDrawer
 export default function ConfirmModal({ isOpen, onClose }: ConfirmModalProps) {
 
     const router = useRouter();

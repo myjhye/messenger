@@ -18,11 +18,16 @@ interface HeaderProps {
     }
 };
 
+// props: ConversationId
+// conversation: 특정 대화 정보
 export default function Header({ conversation }: HeaderProps) {
 
+    // 나를 제외한 대화 참여자들 조회
     const otherUser = useOtherUser(conversation);
+    // ProfileDrawer 열기 여부
     const [drawerOpen, setDrawerOpen] = useState(false);
     
+    // 대화가 그룹인지 여부에 따라 다른 텍스트 표시 - 3 members, Active
     const statusText = useMemo(() => {
         if (conversation.isGroup) {
             return `${conversation.users.length} members`;
@@ -40,6 +45,8 @@ export default function Header({ conversation }: HeaderProps) {
             />
             <div className="bg-white w-full flex border-b-[1px] sm:px-4 py-3 px-4 lg:px-6 justify-between items-center shadow-sm">
                 <div className="flex gap-3 item-center">
+                    {/* lg:hidden: 모바일 화면에서만 표시 */}
+                    {/* 뒤로가기 버튼: /conversations로 이동 */}
                     <Link
                         className="lg:hidden block text-sky-500 hover:text-sky-600 transition cursor-pointer" 
                         href="/conversations"
@@ -61,6 +68,7 @@ export default function Header({ conversation }: HeaderProps) {
                         </div>
                     </div>
                 </div>
+                {/* 클릭 시 ProfileDrawer 열기 */}
                 <HiEllipsisHorizontal 
                     size={32}
                     onClick={() => setDrawerOpen(true)}

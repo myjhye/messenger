@@ -20,6 +20,7 @@ interface SettingsModalProps {
     onClose: () => void;
 };
 
+// props: DesktopSidebar
 export default function SettingsModal({ currentUser, isOpen, onClose }: SettingsModalProps) {
     
     const router = useRouter();
@@ -45,7 +46,7 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
         }
     });
 
-    // 이미지 필드의 현재 값 감시
+    // 이미지 필드의 현재 값 감시 (이미지 추가 시 실시간 변경)
     const image = watch('image');
 
     // 이미지 업로드 핸들러

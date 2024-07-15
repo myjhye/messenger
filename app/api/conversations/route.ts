@@ -14,6 +14,12 @@ export async function POST(request: Request) {
         // 요청 본문을 json으로 파싱
         const body = await request.json();
         const { userId, isGroup, members, name } = body;
+        /*
+            userId: 개인 대화 생성 시 사용되는 상대방 사용자 ID
+            isGroup: 그룹 대화 여부
+            members: 그룹 대화에 참여할 사용자들의 ID 목록
+            name: 그룹 대화 이름
+        */
 
         // 사용자가 로그인 되어 있는지 확인
         if (!currentUser?.id || !currentUser?.email) {
@@ -64,7 +70,7 @@ export async function POST(request: Request) {
         }
 
 
-        //** 2. 기존 개인 대화 조회
+        //** 2. 기존 개인 대화 조회 (기존 대화 찾기 -> 없으면 새로 생성) (기존 대화가 이미 존재하는지 확인 용도)
         const exisitingConversation = await prisma.conversation.findMany({
             where: {
                 OR: [
