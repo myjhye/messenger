@@ -1,3 +1,5 @@
+// 이미지 클릭 시 뜨는 이미지 모달
+
 "use client"
 
 import Modal from "@/app/components/Modal";

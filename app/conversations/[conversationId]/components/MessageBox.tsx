@@ -19,10 +19,15 @@ interface MessageBoxProps {
   onDelete: (id: string) => void;
 }
 
+// props: Body
+// data: 특정 메세지 (개별)
 export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) {
   const session = useSession();
+  // 메세지 편집 상태
   const { setEditMessage, setEditMessageId } = useMessage();
+  // 이미지 모달 열림 상태
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  // 수정/삭제 버튼 열림 상태
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -30,8 +35,10 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     return null;
   }
 
+  // 현재 사용자가 메세지 발신자인지 여부
   const isOwn = session?.data?.user?.email === data.sender.email;
 
+  // 읽은 사용자 목록 (발신자 제외)
   const seenList = (data.seen || [])
     .filter((user) => user.email !== data.sender.email)
     .map((user) => user.name)
@@ -54,6 +61,7 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     !menuOpen && "hidden group-hover:block"
   );
 
+  // 메뉴 외부 클릭 시 메뉴 닫는 이벤트 핸들러
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -67,24 +75,32 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     };
   }, [menuRef]);
 
+  // 수정/삭제 버튼 클릭 시 상태 토글
   const handleHamburgerClick = () => {
     setMenuOpen((prev) => !prev);
   };
 
+  // 메세지 편집 버튼 클릭 핸들러
   const handleEditClick = () => {
     if (data.body) {
+      // 편집할 메세지 내용 설정
       setEditMessage(data.body);
-      setEditMessageId(data.id);  // 수정할 메시지 ID 설정
+      // 수정할 메시지 ID 설정
+      setEditMessageId(data.id);  
     }
     setMenuOpen(false);
   };
 
+  // 메세지 삭제 버튼 클릭 핸들러
   const handleDeleteClick = async () => {
     try {
       const response = await axios.delete(`/api/messages/${data.id}`, {
-        data: { conversationId: data.conversationId }
+        data: { 
+          conversationId: data.conversationId 
+        }
       });
       if (response.status === 200) {
+        // 메세지 삭제 후 콜백 함수 호출
         onDelete(data.id);
       } else {
         console.error("Error deleting message: unexpected status", response.status);
@@ -99,14 +115,17 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
   return (
     <div className={container}>
       <div className={avatar}>
+        {/* 발신자 아바타 */}
         <Avatar user={data.sender} />
       </div>
       <div className={body}>
         <div className="flex items-center gap-1">
           <div className="text-sm text-gray-500">
+            {/* 발신자 이름 */}
             {data.sender.name}
           </div>
           <div className="text-xs text-gray-400">
+            {/* 메세지 생성 시간 */}
             {format(new Date(data.createdAt), "p")}
           </div>
         </div>
@@ -128,16 +147,22 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
               />
             ) : (
               <div>
+                {/* 메세지 내용 */}
                 {data.body}
                 {data.edited && (
-                  <span className="text-xs italic text-gray-500 ml-2">edited</span>
+                  <span className="text-xs italic text-gray-500 ml-2">
+                    edited
+                  </span>
                 )}
               </div>
             )}
           </div>
           {isOwn && (
             <div className={hamburger}>
-              <button onClick={handleHamburgerClick}>&#x2630;</button>
+              {/* 수정/삭제 버튼 */}
+              <button onClick={handleHamburgerClick}>
+                &#x2630;
+              </button>
               {menuOpen && (
                 <div
                   ref={menuRef}
@@ -159,6 +184,7 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
         </div>
         {isLast && isOwn && seenList.length > 0 && (
           <div className="text-xs font-light font-gray-500">
+            {/* 메세지를 읽은 사용자 목록 */}
             {`Seen by ${seenList}`}
           </div>
         )}

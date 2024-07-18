@@ -1,5 +1,4 @@
-// 개인 대화 생성, 조회
-// 그룹 대화 생성
+// 개인 대화 생성, 그룹 대화 생성
 
 import getCurrentUser from "@/app/actions/getCurrentUser"
 import { NextResponse } from "next/server"
@@ -36,9 +35,9 @@ export async function POST(request: Request) {
             const newConversation = await prisma.conversation.create({
                 data: {
                     // 그룹 이름
-                    name,
+                    name: name,
                     // 그룹 대화 여부
-                    isGroup,
+                    isGroup: true,
                     users: {
                         connect: [
                             // 그룹 멤버 연결

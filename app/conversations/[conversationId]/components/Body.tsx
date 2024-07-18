@@ -16,6 +16,8 @@ interface BodyProps {
   initialMessages: FullMessageType[];
 }
 
+// props: ConversationId
+// initialMessages: 특정 메세지 (개별)
 export default function Body({ initialMessages = [] }: BodyProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<FullMessageType[]>(initialMessages);
