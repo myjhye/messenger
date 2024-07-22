@@ -5,6 +5,10 @@ import { NextResponse } from "next/server"
 import prisma from "@/app/libs/prismadb"
 import { pusherServer } from "@/app/libs/pusher";
 
+interface Member {
+    value: string;
+};
+
 export async function POST(request: Request) {
     try {
         // 현재 로그인한 사용자 정보 가져오기
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
                     users: {
                         connect: [
                             // 그룹 멤버 연결
-                            ...members.map((member: { value: string }) => ({
+                            ...members.map((member: Member) => ({
                                 id: member.value
                             })),
                             {
@@ -107,19 +111,23 @@ export async function POST(request: Request) {
                 users: {
                     connect: [
                         // 현재 사용자 연결
-                        { id: currentUser.id },
+                        { 
+                            id: currentUser.id 
+                        },
                         // 대화 상대방 연결
-                        { id: userId }
+                        { 
+                            id: userId 
+                        }
                     ]
                 }
             },
             include: {
-                // 포함된 사용자 정보
+                // 포함된 사용자 정보 (대화에 포함된 모든 사람: 나, 상대방)
                 users: true
             }
         });
 
-        // pusher로 새로운 대화 알림 전송
+        //** 대화에 참여하는 모든 사용자들에게 실시간 알림 전송
         newConversation.users.forEach((user) => {
             if (user.email) {
                 pusherServer.trigger(user.email, 'conversation:new', newConversation);

@@ -11,7 +11,8 @@ export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
     const body = await request.json();
     const {
-      messageId,  // 수정할 메시지의 ID
+      // 수정할 메시지의 ID
+      messageId,  
       message,
       image,
       conversationId
@@ -23,22 +24,26 @@ export async function POST(request: Request) {
 
     let newMessage;
 
+    // 1. 기존 메시지를 수정
     if (messageId) {
-      // 기존 메시지를 수정
       newMessage = await prisma.message.update({
-        where: { id: messageId },
+        where: { 
+          id: messageId 
+        },
         data: {
           body: message,
           image: image,
-          edited: true,  // 수정 상태 추가
+          // 수정 상태 추가
+          edited: true,  
         },
         include: {
           seen: true,
           sender: true,
         },
       });
+
+    // 2. 새로운 메시지 생성
     } else {
-      // 새로운 메시지 생성
       newMessage = await prisma.message.create({
         include: {
           seen: true,
@@ -57,6 +62,7 @@ export async function POST(request: Request) {
               id: currentUser.id,
             },
           },
+          // 메세지 보낸 사람을 바로 seen 목록에 추가 (발신자는 메세지 바로 본 것으로 간주)
           seen: {
             connect: {
               id: currentUser.id,
@@ -66,15 +72,17 @@ export async function POST(request: Request) {
       });
     }
 
-    // 대화 상태 업데이트
+    // 대화 상태 업데이트 (lastMessageAt 업데이트 -> 새로운 메세지 연결)
     const updatedConversation = await prisma.conversation.update({
       where: {
         id: conversationId,
       },
       data: {
+        // lastMessageAt 업데이트
         lastMessageAt: new Date(),
         messages: {
           connect: {
+            // 새로운 메세지 연결
             id: newMessage.id,
           },
         },
@@ -89,8 +97,15 @@ export async function POST(request: Request) {
       },
     });
 
-    await pusherServer.trigger(conversationId, messageId ? 'message:update' : 'messages:new', newMessage);
+    // 새 메세지가 생성되거나 기존 메세지가 업데이트 될 때 pusher로 해당 대화의 모든 클라이언트에게 실시간 알림 보내기
+    await pusherServer.trigger(
+      conversationId, 
+      messageId 
+        ? 'message:update' 
+        : 'messages:new', newMessage
+    );
 
+    // 대화 마지막 메세지
     const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
 
     updatedConversation.users.map((user) => {
@@ -99,8 +114,9 @@ export async function POST(request: Request) {
         messages: [lastMessage],
       });
     });
-
+    
     return NextResponse.json(newMessage);
+  
   } catch (error) {
     console.log(error, 'ERROR_MESSAGES');
     return new NextResponse('Error', { status: 500 });

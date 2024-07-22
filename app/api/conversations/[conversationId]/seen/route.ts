@@ -11,12 +11,12 @@ interface IParams {
 
 export async function POST(
   request: Request,
+  // url 파라미터로 전달된 conversationId를 포함
   { params }: { params: IParams }
 ) {
   try {
     const currentUser = await getCurrentUser();
     const { conversationId } = params;
-
     
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
@@ -53,6 +53,7 @@ export async function POST(
     //** 마지막 메세지를 업데이트해 현재 사용자가 읽었음을 표시
     const updatedMessage = await prisma.message.update({
       where: {
+        // 마지막 메세지 조회해서 업데이트
         id: lastMessage.id
       },
       //- 관련 데이터 함께 가져오기
@@ -85,7 +86,7 @@ export async function POST(
       return NextResponse.json(conversation);
     }
 
-    // pusher로 대화 참가자들에게 마지막 메세지 업데이트 알림 전송
+    // pusher로 대화 참여자들에게 마지막 메세지 업데이트 알림 전송
     await pusherServer.trigger(conversationId!, 'message:update', updatedMessage);
 
     // 성공 응답 반환
