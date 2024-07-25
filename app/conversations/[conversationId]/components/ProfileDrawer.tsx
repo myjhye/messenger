@@ -122,6 +122,7 @@ export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerPr
                                                     <div className="text-sm text-gray-500">
                                                         {statusText}
                                                     </div>
+                                                    {/* 삭제 버튼 */}
                                                     <div className="flex gap-10 my-8">
                                                         <div
                                                             onClick={() => setConfirmOpen(true)} 

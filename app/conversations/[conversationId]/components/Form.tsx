@@ -62,8 +62,12 @@ export default function Form() {
           <div className="flex items-center bg-gray-100 p-2 rounded-md">
             <HiPencil size={24} className="text-blue-500 mr-2" />
             <div className="flex-1">
-              <span className="text-blue-500 font-semibold">Editing</span>
-              <span className="text-gray-700 block">{editMessage}</span>
+              <span className="text-blue-500 font-semibold">
+                Editing
+              </span>
+              <span className="text-gray-700 block">
+                {editMessage}
+              </span>
             </div>
             <MdCancel
               size={24}

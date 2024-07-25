@@ -1,4 +1,4 @@
-// 대화 목록
+// 대화 목록 (개별 채팅 방 목록)
 // 새로운 그룹 채팅을 생성할 수 있는 모달 여는 버튼
 
 "use client"
@@ -17,24 +17,30 @@ import { pusherClient } from "@/app/libs/pusher";
 import { find } from "lodash";
 
 interface ConversationListProps {
-    // 대화 항목들
     initialItems: FullConversationType[];
     users: User[];
 }
 
 // props: layout
+// initialItems: 대화 항목들
+// users: 현재 로그인한 사용자 제외한 사용자 목록
 export default function ConversationList({ initialItems, users }: ConversationListProps) {
 
+    // 대화 목록
     const [items, setItems] = useState(initialItems);
+    // 모달 열림 (그룹 대화 생성용)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const session = useSession();
     const router = useRouter();
     const { conversationId, isOpen } = useConversation();
 
+    // 현재 사용자의 이메일을 pusher 채널 키로 사용
     const pusherKey = useMemo(() => {
         return session.data?.user?.email;
     }, [session.data?.user?.email]);
+
+
 
     useEffect(() => {
         if (!pusherKey) {
@@ -43,21 +49,26 @@ export default function ConversationList({ initialItems, users }: ConversationLi
 
         pusherClient.subscribe(pusherKey);
 
+        // 새 대화 채팅방 추가 될 시 호출되는 핸들러 (group 1, group 2 ...)
         const newHandler = (conversation: FullConversationType) => {
             setItems((current) => {
+                // 이미 존재하는 대화면 아무 작업 하지 않음
                 if (find(current, { id: conversation.id })) {
                     return current;
                 }
 
                 return [
+                    // 새 대화를 기존 대화 목록 앞에 추가
                     conversation,
                     ...current,
                 ];
             })
         };
 
+        // 개별 대화 메세지가 업데이트 될 시 호출되는 핸들러 (안녕 -> 반가워 -> 뭐하니(최신))
         const updateHandler = (conversation: FullConversationType) => {
             setItems((current) => current.map((currentConversation) => {
+                // 새 메세지가 추가될 시
                 if (currentConversation.id === conversation.id) {
                     return {
                         ...currentConversation,
@@ -68,20 +79,25 @@ export default function ConversationList({ initialItems, users }: ConversationLi
             }))
         }
 
+        // 대화(채팅 방)가 삭제될 시 호출되는 핸들러
         const removeHandler = (conversation: FullConversationType) => {
             setItems((current) => {
+                // 삭제된 대화를 목록에서 제거
                 return [...current.filter((convo) => convo.id !== conversation.id)]
             });
 
+            // 삭제된 대화가 현재 열려있는 대화라면 대화 목록 페이지로 이동
             if (conversationId === conversation.id) {
                 router.push('/conversations');
             };
         };
 
+        // pusher 이벤트 바인딩
         pusherClient.bind('conversation:new', newHandler);
         pusherClient.bind('conversation:update', updateHandler);
         pusherClient.bind('conversation:remove', removeHandler);
 
+        // 컴포넌트가 언마운트 될 시 pusher 이벤트 핸들러 해제하고 -> 채널 구독 취소
         return () => {
             pusherClient.unsubscribe(pusherKey);
             pusherClient.unbind('conversation:new', newHandler);
