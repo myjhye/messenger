@@ -5,15 +5,17 @@ import { createContext, useContext, useState } from 'react';
 interface MessageContextType {
   editMessage: string;
   setEditMessage: (message: string) => void;
-  editMessageId: string | null;  // 수정할 메시지 ID 상태 추가
+  editMessageId: string | null;
   setEditMessageId: (id: string | null) => void;
 }
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
 
 export const MessageProvider = ({ children }: { children: React.ReactNode }) => {
+  // 수정 중인 메세지 내용
   const [editMessage, setEditMessage] = useState('');
-  const [editMessageId, setEditMessageId] = useState<string | null>(null);  // 초기값 설정
+  // 수정할 메세지 ID
+  const [editMessageId, setEditMessageId] = useState<string | null>(null);
 
   return (
     <MessageContext.Provider value={{ editMessage, setEditMessage, editMessageId, setEditMessageId }}>

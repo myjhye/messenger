@@ -1,10 +1,13 @@
 // 스키마
 
+// prisma 클라이언트 생성기 설정
 generator client {
+  // 클라이언트를 자바스크립트로 설정
   provider = "prisma-client-js"
 }
 
 datasource db {
+  // 데이터베이스로 mongodb 사용
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }

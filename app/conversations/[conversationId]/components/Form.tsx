@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useMessage } from "@/app/context/MessageContext";
 
 export default function Form() {
+    // 현재 대화 ID
     const { conversationId } = useConversation();
     const { editMessage, setEditMessage, editMessageId, setEditMessageId } = useMessage();
   
@@ -25,31 +26,49 @@ export default function Form() {
       },
     });
   
+    // editMessage 값이 변경될 때마다 메세지 입력 필드를 수정 중인 메세지 내용을 설정
     useEffect(() => {
       if (editMessage) {
         setValue("message", editMessage);
       }
     }, [editMessage, setValue]);
   
+    // 폼 제출 함수 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
       const payload = {
+        // message
         ...data,
-        conversationId: conversationId,
-        messageId: editMessageId,  // 메시지 ID 추가
+        conversationId,
+        // 메시지 ID 추가
+        messageId: editMessageId,  
       };
-      setValue("message", "", { shouldValidate: true });
+
+      // 메세지 입력 필드 초기화
+      setValue("message", "", { 
+        shouldValidate: true 
+      });
+
+      // 수정 중인 메세지 내용 초기화
       setEditMessage("");
+
+      // 수정 중인 메세지 ID 초기화
       setEditMessageId(null);
+
+      // 서버에 메세지 전송
       axios.post("/api/messages", payload);
     };
   
+
+    // 이미지 업로드 함수
     const handleUpload = (result: any) => {
       axios.post("/api/messages", {
+        // 업로드된 이미지 url
         image: result?.info?.secure_url,
         conversationId,
       });
     };
   
+    // 수정 취소 함수
     const handleCancelEdit = () => {
       setEditMessage("");
       setEditMessageId(null);
@@ -60,7 +79,10 @@ export default function Form() {
       <div className="py-4 px-4 bg-white border-t flex flex-col gap-2 w-full">
         {editMessage && (
           <div className="flex items-center bg-gray-100 p-2 rounded-md">
-            <HiPencil size={24} className="text-blue-500 mr-2" />
+            <HiPencil 
+              size={24} 
+              className="text-blue-500 mr-2" 
+            />
             <div className="flex-1">
               <span className="text-blue-500 font-semibold">
                 Editing
@@ -82,7 +104,10 @@ export default function Form() {
             onUpload={handleUpload}
             uploadPreset="mdg81ikp"
           >
-            <HiPhoto size={30} className="text-sky-500" />
+            <HiPhoto 
+              size={30} 
+              className="text-sky-500" 
+            />
           </CldUploadButton>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -99,7 +124,10 @@ export default function Form() {
               type="submit"
               className="rounded-full p-2 bg-sky-500 cursor-pointer hover:bg-sky-600 transition"
             >
-              <HiPaperAirplane size={18} className="text-white" />
+              <HiPaperAirplane 
+                size={18} 
+                className="text-white" 
+              />
             </button>
           </form>
         </div>
