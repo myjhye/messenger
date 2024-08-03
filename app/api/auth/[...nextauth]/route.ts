@@ -12,7 +12,7 @@ import NextAuth from "next-auth/next";
 
 export const authOptions: AuthOptions = {
 
-    // PrismaAdapter에 prisma 인스턴스 전달(auth, prisma 통합 목적)
+    // adapter: prisma를 이용해 next-auth 인증 정보를 데이터베이스에 저장 수단
     adapter: PrismaAdapter(prisma),
 
     // 인증 제공자 설정
@@ -42,6 +42,7 @@ export const authOptions: AuthOptions = {
             },
 
             // auth
+            // 이메일, 비밀번호 기반으로 회원가입 후 로그인
             async authorize(credentials) {
                 // 이메일과 비밀번호가 제공되지 않은 경우 오류 발생
                 if (!credentials?.email || !credentials?.password) {

@@ -43,12 +43,13 @@ export default function Input({
                         required: required,
                     })}
                     className={
-                        // form-input: 플러그인 / 일관된 스타일 적용
-                        // clsx로 조건부 클래스를 적용
-                        clsx(`form-input block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6`, 
-                            // 오류 발생 시 빨간색 테두리 클래스 적용
+                        // clsx: 조건부 클래스 적용
+                        clsx(
+                            // 기본 스타일
+                            `form-input block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6`, 
+                            // 오류 발생: 빨간색 테두리 클래스 적용
                             errors[id] && "focus:ring-rose-500",
-                            // 비활성화 상태일 경우 불투명도와 커서 스타일 적용  
+                            // 비활성화 상태: 불투명도와 커서 스타일 적용  
                             disabled && 'opacity-50 cursor-default'  
                         )
                     }

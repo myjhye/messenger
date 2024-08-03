@@ -32,7 +32,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     }, [session?.status, router]);
 
-    // 로그인, 회원가입 상태 토글
+    // 로그인, 회원가입 상태 토글 (상태 변경)
     const toggleVariant = useCallback(() => {
         if (variant === 'LOGIN') {
             setVariant('REGISTER');
@@ -44,7 +44,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
     // useForm: 폼 상태, 유효성 검사 관리
     const {
-        // 유효성 검사
+        // 폼 필드 등록 (모든 input 필드 객체 ex. email, name, password)
         register, 
         // 폼 제출 시 호출되는 함수 래핑
         handleSubmit,
@@ -60,9 +60,10 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     });
 
-    // 폼 제출 시 호출
+    // 폼 제출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
+
         // 회원가입
         if (variant === 'REGISTER') {
             axios.post('/api/register', data)
@@ -71,6 +72,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                 .catch(() => toast.error('Something went wrong!'))
                 .finally(() => setIsLoading(false))
         }
+
         // 로그인
         if (variant === 'LOGIN') {
             signIn('credentials', {
@@ -98,6 +100,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         signIn(action, {
             redirect: false,
         })
+        // callback: 로그인 결과
         .then((callback) => {
             if (callback?.error) {
                 toast.error('Invalid credentials');
@@ -116,6 +119,7 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                     className="space-y-6"
                     onSubmit={handleSubmit(onSubmit)}
                 >
+                    {/* 회원가입일 때만 이름 필드 표시 */}
                     {variant === 'REGISTER' && (
                         <Input
                             id="name"
@@ -147,11 +151,15 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                             fullWidth
                             type="submit"
                         >
-                            {variant === 'LOGIN' ? 'Sign In' : 'Register'}
+                            {variant === 'LOGIN' 
+                                ? 'Sign In' 
+                                : 'Register'
+                            }
                         </Button>
                     </div>
                 </form>
 
+                {/* 소셜 로그인 */}
                 <div className="mt-6">
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
@@ -178,14 +186,20 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
                 <div className="flex gap-2 justify-center text-sm mt-6 px-2 text-gray-500">
                     <div>
-                        {variant === 'LOGIN' ? 'New to Messenger?' : 'Already have an account?'}
+                        {variant === 'LOGIN' 
+                            ? 'New to Messenger?' 
+                            : 'Already have an account?'
+                        }
                     </div>
 
                     <div
                         onClick={toggleVariant}
                         className="underline cursor-pointer"
                     >
-                        {variant === 'LOGIN' ? 'Create an account' : 'Sign In'}
+                        {variant === 'LOGIN' 
+                            ? 'Create an account' 
+                            : 'Sign In'
+                        }
                     </div>
                 </div>
             </div>

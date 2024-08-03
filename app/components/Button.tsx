@@ -15,13 +15,13 @@ interface ButtonProps {
 };
 
 export default function Button({
-    type,
+    disabled,
     fullWidth,
+    type,
     children,
     onClick,
     secondary,
     danger,
-    disabled,
 }: ButtonProps) {
     return (
         <button
@@ -42,6 +42,7 @@ export default function Button({
                 !secondary && !danger && "bg-sky-500 hover:bg-sky-600 focus-visible:outline-sky-600",
             )}
         >
+            {/* 버튼 내부 텍스트 */}
             {children}
         </button>
     )

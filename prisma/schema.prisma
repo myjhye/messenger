@@ -1,4 +1,4 @@
-// 스키마
+// 데이터베이스 스키마 정의
 
 // prisma 클라이언트 생성기 설정
 generator client {
@@ -12,6 +12,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 사용자
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   name String?
@@ -32,6 +33,7 @@ model User {
   messages Message[]
 }
 
+// OAuth 계정 정보
 model Account {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
@@ -51,6 +53,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+// 대화
 model Conversation {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())

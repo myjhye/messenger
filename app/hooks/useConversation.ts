@@ -8,6 +8,7 @@ export default function useConversation() {
     const params = useParams();
 
     // url 파라미터에서 conversationId 추출
+    // params?.conversationId: 파일 이름이 [conversationId].tsx 라서
     // useMemo: params.conversationId 값이 변경될 때만 재계산
     const conversationId = useMemo(() => {
         if (!params?.conversationId) {
