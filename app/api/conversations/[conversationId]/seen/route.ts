@@ -53,17 +53,16 @@ export async function POST(
     //** 마지막 메세지를 업데이트해 현재 사용자가 읽었음을 표시
     const updatedMessage = await prisma.message.update({
       where: {
-        // 마지막 메세지 조회해서 업데이트
         id: lastMessage.id
       },
-      //- 관련 데이터 함께 가져오기
+      // 관련 데이터 함께 가져오기
       include: {
         // 메세지를 보낸 사용자 정보 포함
         sender: true,
         // 메세지를 본 사용자 정보 포함
         seen: true,
       },
-      //- 업데이트할 데이터
+      // 업데이트할 데이터
       // seen에 현재 사용자 추가
       data: {
         seen: {

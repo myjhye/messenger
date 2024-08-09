@@ -20,7 +20,7 @@ interface MessageBoxProps {
 }
 
 // props: Body
-// data: 특정 메세지 (개별)
+// data: 대화에 속한 모든 메세지
 export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) {
   const session = useSession();
   // 메세지 편집 상태

@@ -17,6 +17,7 @@ const useRoutes = () => {
             label: 'Chat',
             href: '/conversations',
             icon: HiChat,
+            // 경로가 '/conversation'이거나 conversationId가 존재하면 true
             active: pathname === '/conversation' || (conversationId ? true : false)
         },
         {

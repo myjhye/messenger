@@ -12,22 +12,17 @@ import { HiEllipsisHorizontal } from "react-icons/hi2"
 import ProfileDrawer from "./ProfileDrawer"
 import AvatarGroup from "@/app/components/AvatarGroup"
 
-interface HeaderProps {
-    conversation: Conversation & {
-        users: User[]
-    }
-};
 
 // props: ConversationId
 // conversation: 특정 대화 정보
-export default function Header({ conversation }: HeaderProps) {
+export default function Header({ conversation }: any) {
 
     // 나를 제외한 대화 참여자들 조회
     const otherUser = useOtherUser(conversation);
     // ProfileDrawer 열기 여부
     const [drawerOpen, setDrawerOpen] = useState(false);
     
-    // 대화가 그룹인지 여부에 따라 다른 텍스트 표시 - 3 members, Active
+    // 대화가 그룹인지 여부에 따라 다른 텍스트 표시 (3 members, Active)
     const statusText = useMemo(() => {
         if (conversation.isGroup) {
             return `${conversation.users.length} members`;

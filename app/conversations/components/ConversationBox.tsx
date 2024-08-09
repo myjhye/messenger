@@ -19,6 +19,7 @@ interface ConversationBoxProps {
 };
 
 // props: ConversationList
+// data: 대화 항목들
 export default function ConversationBox({ data, selected }: ConversationBoxProps) {
     // 상대방 대화 가져오기
     const otherUser = useOtherUser(data);

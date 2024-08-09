@@ -17,7 +17,7 @@ interface BodyProps {
 }
 
 // props: ConversationId
-// initialMessages: 특정 메세지 (개별)
+// initialMessages: 대화에 속한 모든 메세지 
 export default function Body({ initialMessages = [] }: BodyProps) {
   // 마지막 메세지로 스크롤 하기 위한 참조
   const bottomRef = useRef<HTMLDivElement>(null);

@@ -1,12 +1,10 @@
-// '대화 내에서' 현재 로그인한 사용자 제외한 사용자 목록 조회
-// 좌측 사이드바 대화 항목의 상대방 정보 표시
+// 대화하는 상대방 정보 (단일 사용자)
 
-import { User } from "@prisma/client";
 import { FullConversationType } from "../types";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 
-const useOtherUser = (conversation: FullConversationType | { users: User[] }) => {
+export default function useOtherUser (conversation: FullConversationType) {
 
     const session = useSession();
 
@@ -14,6 +12,7 @@ const useOtherUser = (conversation: FullConversationType | { users: User[] }) =>
         const currentUserEmail = session?.data?.user?.email;
         const otherUser = conversation.users.filter((user) => user.email !== currentUserEmail);
 
+        // 첫 번째 사용자만 반환
         return otherUser[0];
 
     }, [session?.data?.user?.email, 
@@ -22,5 +21,3 @@ const useOtherUser = (conversation: FullConversationType | { users: User[] }) =>
 
     return otherUser;
 };
-
-export default useOtherUser;

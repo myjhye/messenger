@@ -68,13 +68,15 @@ export default function ConversationList({ initialItems, users }: ConversationLi
         // 개별 대화 메세지가 업데이트 될 시 호출되는 핸들러 (안녕 -> 반가워 -> 뭐하니(최신))
         const updateHandler = (conversation: FullConversationType) => {
             setItems((current) => current.map((currentConversation) => {
-                // 새 메세지가 추가될 시
+                // 새 메세지가 추가되거나 업데이트 될 시
                 if (currentConversation.id === conversation.id) {
                     return {
                         ...currentConversation,
+                        // 새 메세지 목록으로 업데이트
                         messages: conversation.messages
                     }
                 }
+                // 변경이 없으면 그대로 반환
                 return currentConversation;
             }))
         }

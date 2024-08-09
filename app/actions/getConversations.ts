@@ -4,7 +4,7 @@
 import prisma from "@/app/libs/prismadb"
 import getCurrentUser from "./getCurrentUser"
 
-const getConversations = async () => {
+export default async function getConversations() {
     // 현재 로그인한 사용자
     const currentUser = await getCurrentUser();
 
@@ -44,5 +44,3 @@ const getConversations = async () => {
         return [];
     }
 };
-
-export default getConversations;
