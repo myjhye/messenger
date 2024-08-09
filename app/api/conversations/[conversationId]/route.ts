@@ -11,29 +11,26 @@ interface IParams {
 
 export async function DELETE(
     request: Request,
-    // 경로 파라미터에서 conversationId를 추출
     { params }: { params: IParams }
 ) {
     try {
 
-        // 요청에서 conversationId 추출
         const { conversationId } = params;
 
-        // 현재 로그인한 사용자 정보 가져오기
         const currentUser = await getCurrentUser();
 
-        // 사용자가 로그인 되어 있는지 확인
+        // 현재 사용자가 로그인 되어 있는지 확인
         if (!currentUser?.id) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        // 주어진 conversationId로 대화 찾기 (삭제하려는 대화가 사용자가 참여 중인지 확인)
+        // 1. 대화 조회: 삭제하려는 대화가 존재하는지
         const existingConversation = await prisma.conversation.findUnique({
             where: {
                 id: conversationId,
             },
             include: {
-                // 대화에 포함된 사용자 정보도 함께 가져오기
+                // 대화에 포함된 사용자들 조회 (현재 사용자가 대화에 참여 중인지)
                 users: true,
             },
         });
@@ -43,20 +40,21 @@ export async function DELETE(
             return new NextResponse('Invalid ID', { status: 400 });
         }
 
-        // 대화 삭제
+        // 2. 대화 삭제
         const deletedConversation = await prisma.conversation.deleteMany({
             where: {
-                // 주어진 conversationId와 일치하는 대화
                 id: conversationId,
                 userIds: {
-                    // 현재 사용자가 포함된 대화만 삭제
+                    // userIds 배열에 현재 사용자가 포함되어 있는지 (현재 사용자가 포함된 대화만 삭제)
                     hasSome: [currentUser.id]
                 }
             }
         });
 
+        // 3. 실시간 알림 전송 (대화가 삭제되었음을 대화에 참여 중인 모든 사용자들에게 알림)
         existingConversation.users.forEach((user) => {
             if (user.email) {
+                // existingConversation을 삭제했다고 알림
                 pusherServer.trigger(user.email, 'conversation:remove', existingConversation)
             }
         })

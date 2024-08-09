@@ -11,19 +11,11 @@ import Avatar from "@/app/components/Avatar";
 import ConfirmModal from "./ConfirmModal";
 import AvatarGroup from "@/app/components/AvatarGroup";
 
-interface ProfileDrawerProps {
-    isOpen: boolean;
-    onClose: () => void;
-    data: Conversation & {
-        users: User[]
-    }
-}
-
 // props: Header
 // data: 특정 대화 정보
-export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerProps) {
+export default function ProfileDrawer({ isOpen, onClose, data }: any) {
 
-    // 대화에서 현재 사용자 외 다른 사용자 가져오기
+    // 대화하는 상대방 정보 (단일 사용자)
     const otherUser = useOtherUser(data);
     // 삭제 확인 모달
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -144,7 +136,7 @@ export default function ProfileDrawer({ isOpen, onClose, data }: ProfileDrawerPr
                                                                         Emails
                                                                     </dt>
                                                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">
-                                                                        {data.users.map((user) => (
+                                                                        {data.users.map((user: any) => (
                                                                             <div 
                                                                                 key={user.id}
                                                                                 className="inline-block bg-gray-100 text-gray-800 py-1 px-2 rounded-full mr-1 mb-1"

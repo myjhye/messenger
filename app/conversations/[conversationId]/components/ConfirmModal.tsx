@@ -40,6 +40,11 @@ export default function ConfirmModal({ isOpen, onClose }: ConfirmModalProps) {
             })
             .catch(() => toast.error('Something went wrong!'))
             .finally(() => setIsLoading(false))
+
+
+    // conversationId: 사용자가 다른 대화 선택 시
+    // router: 페이지 이동이나 새로고침 시
+    // onClose: 모달 닫는 함수가 변경 시
     }, [conversationId, router, onClose]);
 
 

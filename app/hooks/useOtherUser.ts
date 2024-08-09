@@ -15,9 +15,10 @@ export default function useOtherUser (conversation: FullConversationType) {
         // 첫 번째 사용자만 반환
         return otherUser[0];
 
-    }, [session?.data?.user?.email, 
-        conversation.users
-    ]);
+
+    // session?.data?.user?.email: 현재 로그인한 사용자 변경되면 재계산
+    // conversation.users: 대화 상대방이 추가되거나 대화에서 나갈 때 재계산
+    }, [session?.data?.user?.email, conversation.users]);
 
     return otherUser;
 };

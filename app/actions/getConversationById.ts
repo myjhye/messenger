@@ -3,7 +3,7 @@
 import getCurrentUser from "./getCurrentUser";
 import prisma from "@/app/libs/prismadb";
 
-const getConversationById = async (conversationId: string) => {
+export default async function getConversationById (conversationId: string) {
     try {
         const currentUser = await getCurrentUser();
 
@@ -28,5 +28,3 @@ const getConversationById = async (conversationId: string) => {
         return null;
     }
 };
-
-export default getConversationById;
