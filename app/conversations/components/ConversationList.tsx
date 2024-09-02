@@ -23,7 +23,7 @@ interface ConversationListProps {
 
 // props: layout
 // initialItems: 대화 항목들
-// users: 현재 로그인한 사용자 제외한 사용자 목록
+// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 사용)
 export default function ConversationList({ initialItems, users }: ConversationListProps) {
 
     // 대화 목록

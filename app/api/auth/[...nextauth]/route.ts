@@ -1,5 +1,4 @@
-// 로그인 (인증 요청)
-// 인증 제공자 설정(깃허브, 구글, 일반 로그인)
+// 로그인 수단(인증 제공자) 정의 (깃허브, 구글, 일반 로그인)
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions } from "next-auth";
@@ -12,22 +11,23 @@ import NextAuth from "next-auth/next";
 
 export const authOptions: AuthOptions = {
 
-    // adapter: prisma를 이용해 next-auth 인증 정보를 데이터베이스에 저장 수단
+    // PrismaAdapter: next-auth 인증 정보(회원가입한 사용자 정보)를 prisma 데이터베이스에 저장
+    // 이 경우에는 OAuth(github, google)으로 로그인한 사용자 정보 저장
     adapter: PrismaAdapter(prisma),
 
-    // 인증 제공자 설정
+    // 로그인 수단(인증 제공자) 설정
     providers: [
-        // 1.
+        // 1. 깃허브
         GithubProvider({
             clientId: process.env.GITHUB_ID as string,
             clientSecret: process.env.GITHUB_SECRET as string,
         }),
-        // 2.
+        // 2. 구글
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
-        // 3. 이메일, 비밀번호 기반의 인증 제공자 설정
+        // 3. 이메일, 비밀번호
         CredentialsProvider({
             name: 'credentials',
             credentials: {
@@ -41,46 +41,47 @@ export const authOptions: AuthOptions = {
                 },
             },
 
-            // auth
-            // 이메일, 비밀번호 기반으로 회원가입 후 로그인
+            // (3)단계에서 입력받은 이메일과 비밀번호로 로그인 처리
             async authorize(credentials) {
-                // 이메일과 비밀번호가 제공되지 않은 경우 오류 발생
+                // 이메일과 비밀번호 미입력 시 에러
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error('Invalid credentials');
                 }
 
-                // prisma의 user 스키마에서 사용자 찾기
+                // 입력된 이메일과 일치하는 사용자 조회
                 const user = await prisma.user.findUnique({
                     where: {
                         email: credentials.email
                     }
                 });
 
-                // 사용자가 없거나 비밀번호가 없으면 오류 발생
+                // 입력한 이메일이나 비밀번호 틀릴 시 에러
                 if (!user || !user?.hashedPassword) {
                     throw new Error('Invalid credentials');
                 }
 
                 // 입력된 비밀번호와 해시된 비밀번호 비교
                 const isCorrectPassword = await bcrypt.compare(
+                    // 입력한 비밀번호
                     credentials.password,
+                    // 데이터베이스에 저장된 해시 비밀번호
                     user.hashedPassword,
                 );
 
-                // 비밀번호가 일치하지 않으면 오류 발생
+                // 비밀번호가 불일치 시 에러
                 if (!isCorrectPassword) {
                     throw new Error('Invalid credentials');
                 }
 
-                // 인증 성공 시 사용자를 반환
+                // 입력한 이메일과 비밀번호가 일치하는 사용자 반환
                 return user;
             }
         })
     ],
 
-    // 개발 환경에서는 디버그 모드 활성화
+    // 개발 환경(앱이 개발 환경에서 실행)에서는 디버그 모드 활성화(콘솔에 더 많은 디버그 정보 출력 -> 개발자가 인증 관련 문제 쉽게 추적 용도)
     debug: process.env.NODE_ENV === 'development',
-    // 인증 수단 : jwt
+    // 화면(클라이언트) 세션 유지 수단: jwt (로그인 전, 후 다른 화면 조회)
     session: {
         strategy: 'jwt',
     },
@@ -96,5 +97,6 @@ export {
 
 /*
     GET: 로그인한 사용자 정보 조회
-    POST: 로그인, 로그아웃 처리
+    POST: 로그인 처리
+    --> handler로 외부 파일에서 로그인한 사용자의 세션 정보 조회, 로그인 처리
 */

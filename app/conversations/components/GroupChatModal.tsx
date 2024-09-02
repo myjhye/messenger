@@ -20,6 +20,7 @@ interface GroupChatModalProps {
 }
 
 // props: ConversationList
+// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 사용)
 export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModalProps) {
 
     const router = useRouter();

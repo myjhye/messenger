@@ -38,7 +38,8 @@ export default function Input({
                     type={type}
                     autoComplete="id"
                     disabled={disabled}
-                    // id: 입력 필드 고유 식별자 (email, password..)
+                    // id: 필드 연결 (name)
+                    // required: 유효성 검사
                     {...register(id, {
                         required: required,
                     })}

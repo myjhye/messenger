@@ -28,9 +28,7 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
 
     // 폼 상태 관리
     const {
-        // 입력 필드 
         register,
-        // 폼 제출
         handleSubmit,
         // 필드 값 수동 업데이트
         setValue,
@@ -42,11 +40,11 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
     } = useForm<FieldValues>({
         defaultValues: {
             name: currentUser?.name,
-            image: currentUser?.image,
+            //image: currentUser?.image,
         }
     });
 
-    // 이미지 필드의 현재 값 감시 (이미지 추가 시 실시간 변경)
+    // 이미지 필드에서 현재 이미지 값 가져오기
     const image = watch('image');
 
     // 이미지 업로드 핸들러
@@ -90,7 +88,7 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
                                 id="name"
                                 errors={errors}
                                 required
-                                // 필드를 폼에 등록
+                                // 필드 연결 (기본 값 설정)
                                 register={register}
                             />
                             <div>

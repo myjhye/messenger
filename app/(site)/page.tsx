@@ -6,7 +6,7 @@ import Image from "next/image";
 import AuthForm from "./components/AuthForm";
 import { useState } from "react";
 
-type Variant = 'LOGIN' | 'REGISTER';
+export type Variant = 'LOGIN' | 'REGISTER';
 
 export default function Home() {
 

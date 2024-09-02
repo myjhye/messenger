@@ -12,10 +12,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Variant } from "../page";
 
 interface AuthFormProps {
-    variant: 'LOGIN' | 'REGISTER';
-    setVariant: (variant: 'LOGIN' | 'REGISTER') => void;
+    variant: Variant;
+    setVariant: (variant: Variant) => void;
 }
 
 export default function AuthForm({ variant, setVariant }: AuthFormProps) {
@@ -42,13 +43,9 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     }, [variant]);
 
-    // useForm: 폼 상태, 유효성 검사 관리
     const {
-        // 폼 필드 등록 (모든 input 필드 객체 ex. email, name, password)
         register, 
-        // 폼 제출 시 호출되는 함수 래핑
         handleSubmit,
-        // 유효성 검사 오류
         formState: {
             errors
         } 
@@ -66,8 +63,10 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
         // 회원가입
         if (variant === 'REGISTER') {
+            // data: register에 등록된 필드 값들
             axios.post('/api/register', data)
                 // 가입 후 자동 로그인
+                // credentials: 이메일, 비밀번호 사용한 로그인
                 .then(() => signIn('credentials', data))
                 .catch(() => toast.error('Something went wrong!'))
                 .finally(() => setIsLoading(false))
@@ -79,8 +78,6 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                 ...data,
                 redirect: false,
             })
-            // 로그인 요청에 대한 콜백
-            // callback: 반환하는 객체
             .then((callback) => {
                 if (callback?.error) {
                     toast.error('Invalid credentials');
@@ -93,14 +90,13 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
         }
     }
 
-    // 소셜 로그인 시 호출
+    // 소셜 로그인
     const socialAction = (action: string) => {
         setIsLoading(true);
 
         signIn(action, {
             redirect: false,
         })
-        // callback: 로그인 결과
         .then((callback) => {
             if (callback?.error) {
                 toast.error('Invalid credentials');
@@ -147,9 +143,9 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
                     />
                     <div>
                         <Button
+                            type="submit"
                             disabled={isLoading}
                             fullWidth
-                            type="submit"
                         >
                             {variant === 'LOGIN' 
                                 ? 'Sign In' 

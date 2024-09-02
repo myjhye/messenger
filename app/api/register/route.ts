@@ -1,7 +1,6 @@
-// 회원가입 - 비밀번호 해싱, 사용자 데이터베이스 추가
+// 회원가입
 
 import bcrypt from "bcrypt";
-
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
 
@@ -9,8 +8,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        // 1. 요청에서 email, name, password 추출
-        // 사용자로부터 이메일, 이름, 비밀번호 입력 받기
+        // 1. 클라이언트에서 '이메일, 이름, 비밀번호' 입력 받기
         const { email, name, password } = body;
 
         // 하나라도 입력 없으면 에러
@@ -23,6 +21,7 @@ export async function POST(request: Request) {
 
         // 3. 데이터베이스에 새 사용자 추가
         const user = await prisma.user.create({
+            // data 객체에 담아서 저장 (prisma 특징)
             data: {
                 email,
                 name,

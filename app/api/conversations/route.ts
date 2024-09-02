@@ -19,6 +19,7 @@ export async function POST(request: Request) {
         const { userId, isGroup, members, name } = body;
         /*
             userId: 개인 대화 생성 시 사용되는 상대방 사용자 ID
+            
             isGroup: 그룹 대화 여부
             members: 그룹 대화에 참여할 사용자들의 ID 목록
             name: 그룹 대화 이름
@@ -77,7 +78,6 @@ export async function POST(request: Request) {
         const exisitingConversation = await prisma.conversation.findMany({
             where: {
                 OR: [
-                    // 대화에 포함된 사용자 ID 배열이 현재 사용자와 다른 사용자의 ID 배열과 같아야 함
                     {
                         userIds: {
                             equals: [
@@ -97,10 +97,10 @@ export async function POST(request: Request) {
                 ]
             }
         });
-
-        // 기존 대화가 있으면 반환
+        
         const singleConversation = exisitingConversation[0];
 
+        // 기존 대화가 있으면 반환
         if (singleConversation) {
             return NextResponse.json(singleConversation);
         }
