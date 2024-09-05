@@ -1,10 +1,10 @@
-// 대화 헤더 - 대화 제목, 상대방 아바타, 상태 정보(active)
+// 대화 헤더
+// 대화 제목, 상대방 아바타, 상태 정보(active)
 
 "use client"
 
 import Avatar from "@/app/components/Avatar"
 import useOtherUser from "@/app/hooks/useOtherUser"
-import { Conversation, User } from "@prisma/client"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { HiChevronLeft } from "react-icons/hi"
@@ -17,17 +17,18 @@ import AvatarGroup from "@/app/components/AvatarGroup"
 // conversation: 특정 대화 정보
 export default function Header({ conversation }: any) {
 
-    // 나를 제외한 대화 참여자들 조회
+    // 상대방(그룹이면 그 중에 1명) 프로필 정보
     const otherUser = useOtherUser(conversation);
-    // ProfileDrawer 열기 여부
+    // ProfileDrawer 열기
     const [drawerOpen, setDrawerOpen] = useState(false);
     
-    // 대화가 그룹인지 여부에 따라 다른 텍스트 표시 (3 members, Active)
+    // 대화가 그룹인지 여부에 따른 텍스트 표시
+    // 그룹이면 참여자 수 -> 3 members
+    // 개인이면 -> Active
     const statusText = useMemo(() => {
         if (conversation.isGroup) {
             return `${conversation.users.length} members`;
         }
-
         return 'Active';
     }, []);
 

@@ -11,7 +11,7 @@ interface MessageInputProps {
     errors: FieldErrors;
 }
 
-export default function MessageInput({ placeholder, id, type, required, register, errors }: MessageInputProps) {
+export default function MessageInput({ placeholder, id, type, required, register }: MessageInputProps) {
     return (
         <div className="relative w-full">
             <input 

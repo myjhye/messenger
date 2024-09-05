@@ -1,9 +1,9 @@
-// 세션의 사용자 정보 (기본 정보)
+// 세션 정보 (서버) <-> AuthContext (클라이언트 세션 정보)
+// 세션 유무 확인용
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export default async function getSession() {
-    // authOptions: 인증 설정
     return await getServerSession(authOptions);
 }

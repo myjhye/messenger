@@ -1,3 +1,5 @@
+// 사이드바 (데스크탑)
+
 "use client";
 
 import useRoutes from "@/app/hooks/useRoutes"
@@ -18,6 +20,7 @@ export default function DesktopSidebar({ currentUser }: DesktopSidebarProps) {
 
     return (
         <>
+            {/* 프로필 설정 모달 (클릭 시 조회) */}
             <SettingsModal
                 currentUser={currentUser}
                 isOpen={isOpen}

@@ -1,4 +1,4 @@
-// conversationId로 특정 대화 정보 조회
+// 특정 대화(conversationId) 정보 조회
 
 import getCurrentUser from "./getCurrentUser";
 import prisma from "@/app/libs/prismadb";
@@ -21,7 +21,7 @@ export default async function getConversationById (conversationId: string) {
             },
         });
 
-        // 조회된 대화 반환
+        // 조회된 대화 정보 반환
         return conversation;
 
     } catch (error: any) {

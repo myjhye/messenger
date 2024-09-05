@@ -1,3 +1,6 @@
+// 전체 폼
+// 채팅 방 내 메세지 입력, 수정, 이미지 업로드, 메세지 전송
+
 "use client";
 
 import useConversation from "@/app/hooks/useConversation";

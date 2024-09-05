@@ -1,3 +1,5 @@
+// 그룹 채팅 프로필 이미지
+
 "use client"
 
 import { User } from "@prisma/client"
@@ -7,7 +9,7 @@ interface AvatarGroupProps {
     users?: User[]
 }
 
-// props: ConversationBox
+// users: ConversationBox (현재 사용자 포함된 대화 참여자들)
 export default function AvatarGroup({ 
     users = [] 
 }: AvatarGroupProps) {

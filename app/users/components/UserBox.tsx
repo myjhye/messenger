@@ -1,4 +1,4 @@
-// 사용자 목록 (나 제외) - 개별
+// 개별 사용자 목록 (현재 사용자 제외)
 
 "use client"
 
@@ -13,18 +13,18 @@ interface UserBoxProps {
     data: User
 }
 
-// props: UserList
+// data: UserList (현재 사용자 제외한 사용자 목록)
 export default function UserBox({ data }: UserBoxProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
-    // 클릭 핸들러
+    // 클릭 함수
     const handleClick = useCallback(() => {
         setIsLoading(true);
 
         // 개인 대화 생성
         axios.post('/api/conversations', {
-            // 클릭된 사용자의 id
+            // 클릭된 사용자 userId 서버 전달
             userId: data.id,
         })
         .then((data) => {
@@ -39,6 +39,7 @@ export default function UserBox({ data }: UserBoxProps) {
             {isLoading && (
                 <LoadingModal />
             )}
+            {/* handleClick: data.name(사용자 이름) 클릭 시 data.id(사용자 id) 전달하며 대화 생성 */}
             <div 
                 onClick={handleClick}
                 className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer"
@@ -48,6 +49,7 @@ export default function UserBox({ data }: UserBoxProps) {
                     <div className="focus:outline-none">
                         <div className="flex justify-between items-center mb-1">
                             <p className="text-sm font-medium text-gray-900">
+                                {/* 사용자 이름 */}
                                 {data.name}
                             </p>
                         </div>

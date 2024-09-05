@@ -16,10 +16,8 @@ export async function DELETE(
     try {
 
         const { conversationId } = params;
-
         const currentUser = await getCurrentUser();
 
-        // 현재 사용자가 로그인 되어 있는지 확인
         if (!currentUser?.id) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
@@ -29,8 +27,9 @@ export async function DELETE(
             where: {
                 id: conversationId,
             },
+            // 추가 조회
             include: {
-                // 대화에 포함된 사용자들 조회 (현재 사용자가 대화에 참여 중인지)
+                // 대화 참여한 사용자들 정보 (대화 참여하는 사용자들에게 대화 삭제 알림 전송 용도)
                 users: true,
             },
         });
@@ -40,12 +39,12 @@ export async function DELETE(
             return new NextResponse('Invalid ID', { status: 400 });
         }
 
-        // 2. 대화 삭제
+        // 2. 대화 삭제 (현재 사용자가 대화에 포함된 경우에만)
         const deletedConversation = await prisma.conversation.deleteMany({
             where: {
                 id: conversationId,
+                // 현재 사용자가 참여 중인 대화만 삭제
                 userIds: {
-                    // userIds 배열에 현재 사용자가 포함되어 있는지 (현재 사용자가 포함된 대화만 삭제)
                     hasSome: [currentUser.id]
                 }
             }
@@ -58,7 +57,6 @@ export async function DELETE(
                 pusherServer.trigger(user.email, 'conversation:remove', existingConversation)
             }
         })
-
         // 삭제된 대화 반환
         return NextResponse.json(deletedConversation);
 

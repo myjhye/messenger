@@ -3,7 +3,7 @@
 import prisma from "@/app/libs/prismadb"
 import getSession from "./getSession"
 
-const getAllUsersExceptMe = async () => {
+export default async function getAllUsersExceptMe() {
 
     const session = await getSession();
 
@@ -29,5 +29,3 @@ const getAllUsersExceptMe = async () => {
         return [];
     }
 }
-
-export default getAllUsersExceptMe;

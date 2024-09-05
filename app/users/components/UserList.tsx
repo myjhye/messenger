@@ -1,4 +1,4 @@
-// 사용자 목록 (나 제외)
+// 사용자 목록 (현재 사용자 제외)
 
 "use client";
 
@@ -9,7 +9,7 @@ interface UserListProps {
     items: User[]
 };
 
-// props: UsersLayout
+// items: UsersLayout (현재 사용자 제외한 사용자 목록)
 export default function UserList({ items }: UserListProps) {
     return (
         <aside className="fixed inset-y-0 pb-20 lg:pb-0 lg:left-20 lg:w-80 lg:block overflow-y-auto border-r border-gray-200 block w-full left-0">

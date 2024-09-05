@@ -1,4 +1,4 @@
-// 데이터베이스의 사용자 정보 (일반 세션 정보보다 구체적)
+// 현재 사용자 정보 (서버 세션 정보(getSessions) 사용)
 
 import prisma from "@/app/libs/prismadb";
 import getSession from "./getSession";
@@ -21,6 +21,7 @@ export default async function getCurrentUser() {
             return null;
         }
 
+        // 반환 값: id, email, name, image, createdAt, updatedAt
         return currentUser;
 
     } catch (error: any) {

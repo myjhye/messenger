@@ -21,6 +21,7 @@ interface AuthFormProps {
 
 export default function AuthForm({ variant, setVariant }: AuthFormProps) {
     
+    // 세션 정보 (클라이언트 용도)
     const session = useSession();
     const router = useRouter();
 
@@ -74,19 +75,24 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
 
         // 로그인
         if (variant === 'LOGIN') {
+            // signIn 사용(회원가입처럼 api url 방식 X, 기본 제공 함수) 
             signIn('credentials', {
+                // 입력한 이메일, 비밀번호 (register에 등록된 필드 값)
                 ...data,
+                // 로그인 후 다른 화면으로 이동 X
                 redirect: false,
             })
             .then((callback) => {
+                // 로그인 실패
                 if (callback?.error) {
                     toast.error('Invalid credentials');
                 }
+                // 로그인 성공
                 if (callback?.ok && !callback?.error) {
                     toast.success('Logged In!')
                 }
             })
-            .finally(() => setIsLoading(false))
+            .finally(() => setIsLoading(false));
         }
     }
 

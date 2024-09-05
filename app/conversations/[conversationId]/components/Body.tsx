@@ -16,22 +16,22 @@ interface BodyProps {
   initialMessages: FullMessageType[];
 }
 
-// props: ConversationId
-// initialMessages: 대화에 속한 모든 메세지 
+// initialMessages: ConversationId (대화에 속한 모든 메세지)
 export default function Body({ initialMessages = [] }: BodyProps) {
-  // 마지막 메세지로 스크롤 하기 위한 참조
+  // html 참조 (마지막 메세지로 스크롤 용도)
   const bottomRef = useRef<HTMLDivElement>(null);
+  
+  // 대화 내 메세지 목록
   const [messages, setMessages] = useState<FullMessageType[]>(initialMessages);
-  // 현재 대화 ID 가져오는 커스텀 훅
+  
   const { conversationId } = useConversation();
-  // 현재 사용자 세션 가져오기
+  
   const { data: session } = useSession();
-  // 현재 사용자 이메일
   const currentUserEmail = session?.user?.email;
 
   useEffect(() => {
-    // 대화가 변경될 때마다 메세지를 읽음 상태로 표시
     axios.post(`/api/conversations/${conversationId}/seen`);
+    // 대화가 변경될 때마다 메세지를 읽음 상태로 표시
   }, [conversationId]);
 
 
@@ -41,7 +41,7 @@ export default function Body({ initialMessages = [] }: BodyProps) {
 
     //** 새 메세지 도착 시 실행 핸들러
     const messageHandler = (message: FullMessageType) => {
-      // 메세지를 읽음 상태로 표시
+      // 마지막 메세지를 읽음 상태로 표시
       axios.post(`/api/conversations/${conversationId}/seen`);
       setMessages((current) => {
         // 중복 메세지 방지
@@ -51,7 +51,7 @@ export default function Body({ initialMessages = [] }: BodyProps) {
         return [...current, message];
       });
 
-      // 메세지 발신자가 현재 사용자일 경우 스크롤을 맨 아래로 이동
+      // 메세지 전송 후 화면 스크롤해 화면 하단 이동
       if (message.sender.email === currentUserEmail) {
         bottomRef?.current?.scrollIntoView();
       }

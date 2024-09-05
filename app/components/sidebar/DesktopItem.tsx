@@ -1,3 +1,5 @@
+// sidebar 개별 항목 (chat, user, search, logout)
+
 import clsx from "clsx";
 import Link from "next/link";
 import { IconType } from "react-icons";
@@ -10,6 +12,7 @@ interface DesktopItemProps {
     onClick?: () => void;
   }
 
+// props: DesktopSidebar
 export default function DesktopItem({ 
     href, 
     label, 

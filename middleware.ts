@@ -1,4 +1,5 @@
-// 미들웨어 - 인증된 사용자만 접근
+// 미들웨어 (인증된 사용자만 접근)
+// layout에 정의할 필요 없이 파일 정의만 해도 자동 적용
 
 import { withAuth } from "next-auth/middleware";
 
@@ -10,7 +11,7 @@ export default withAuth({
 });
 
 export const config = {
-    // 이 패턴에 매칭되는 모든 경로에 미들웨어 적용
+    // 미들웨어 적용되는 경로
     matcher: [
         "/users/:path*",
         "/conversations/:path*",

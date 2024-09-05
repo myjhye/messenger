@@ -1,3 +1,5 @@
+// 프로필 이미지 (사이드바 하단)
+
 "use client";
 
 import { User } from "@prisma/client";
@@ -7,6 +9,7 @@ interface AvatarProps {
     user?: User | null;
 }
 
+// user: DesktopSidebar
 export default function Avatar({ user }: AvatarProps) {
     return (
         <div className="relative">

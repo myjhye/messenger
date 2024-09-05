@@ -1,8 +1,8 @@
-// conversationId로 특정 대화에 속한 메세지 목록 조회
+// 특정 대화(conversationId)에 속한 메세지 목록 조회
 
 import prisma from "@/app/libs/prismadb"
 
-const getMessages = async (conversationId: string) => {
+export default async function getMessages(conversationId: string) {
     try {
         const messages = await prisma.message.findMany({
             where: {
@@ -16,11 +16,8 @@ const getMessages = async (conversationId: string) => {
                 createdAt: 'asc'
             },
         });
-
         return messages;
     } catch (error: any) {
         return [];
     }
 }
-
-export default getMessages;

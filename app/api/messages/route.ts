@@ -1,5 +1,4 @@
-// 새로운 메세지를 데이터베이스에 저장
-// 대화의 상태 업데이트
+// 새 메세지 저장
 
 import { NextResponse } from "next/server";
 import getCurrentUser from "@/app/actions/getCurrentUser";

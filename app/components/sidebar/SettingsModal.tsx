@@ -30,9 +30,7 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
     const {
         register,
         handleSubmit,
-        // 필드 값 수동 업데이트
         setValue,
-        // 필드 값 실시간 추적하고 변경 될 때마다 자동 업데이트
         watch,
         formState: {
             errors,
@@ -47,14 +45,15 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
     // 이미지 필드에서 현재 이미지 값 가져오기
     const image = watch('image');
 
-    // 이미지 업로드 핸들러
+    // 이미지 업로드 함수
     const handleUpload = (result: any) => {
         setValue('image', result?.info?.secure_url, {
             shouldValidate: true,
         })
     }
 
-    // 폼 제출 핸들러 (useForm으로 폼 데이터를 자동 수집해 간단 처리)
+    // 폼 제출 함수
+    // useForm으로 입력 필드 값들 자동 수집해 간단 처리
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
         

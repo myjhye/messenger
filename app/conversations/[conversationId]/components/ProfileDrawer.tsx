@@ -1,8 +1,8 @@
-// 대화 세부 정보 보여주는 사이드 패널
+// 채팅 방 내부의 사이드 패널
+// 상대방 정보 표시
 // 대화 삭제 버튼으로 삭제
 
 import useOtherUser from "@/app/hooks/useOtherUser";
-import { Conversation, User } from "@prisma/client";
 import { Fragment, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { Dialog, Transition } from "@headlessui/react";
@@ -11,11 +11,10 @@ import Avatar from "@/app/components/Avatar";
 import ConfirmModal from "./ConfirmModal";
 import AvatarGroup from "@/app/components/AvatarGroup";
 
-// props: Header
-// data: 특정 대화 정보
+// data: Header (특정 대화 정보)
 export default function ProfileDrawer({ isOpen, onClose, data }: any) {
 
-    // 대화하는 상대방 정보 (단일 사용자)
+    // 상대방(그룹이면 그 중에 1명) 프로필 정보
     const otherUser = useOtherUser(data);
     // 삭제 확인 모달
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -25,17 +24,18 @@ export default function ProfileDrawer({ isOpen, onClose, data }: any) {
         return format(new Date(otherUser.createdAt), 'PP');
     }, [otherUser.createdAt]);
 
-    // 대화 제목 또는 다른 사용자 이름
+    // 대화 제목(data.name) 또는 상대방 이름 (otherUser.name)
     const title = useMemo(() => {
         return data.name || otherUser.name;
     }, [data.name, otherUser.name]);
 
-    // 그룹 대화인 경우 멤버 수 표시 / 그룹 대화가 아니면 Active 표시
+    // 대화가 그룹인지 여부에 따른 텍스트 표시
+    // 그룹이면 참여자 수 -> 3 members
+    // 개인이면 -> Active
     const statusText = useMemo(() => {
         if (data.isGroup) {
             return `${data.users.length} members`;
         }
-
         return 'Active';
     }, [data]);
 
@@ -185,16 +185,3 @@ export default function ProfileDrawer({ isOpen, onClose, data }: any) {
         </>
     )
 }
-
-{/*
-
-전체 순서
-1. Transition.Root
-2. Dialog
-3. Transition.Child (1번째: 배경)
-4. 모달 컨테이너 (div 요소들)
-5. Transition.Child (2번째: 모달 패널 전환 애니메이션)
-6. Dialog.Panel
-7. 모달 내부 구조 (div, button, AvatarGroup, Avatar, dl, dt, dd)
-
-*/}

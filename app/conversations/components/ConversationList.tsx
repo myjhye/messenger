@@ -1,5 +1,4 @@
-// 대화 목록 (개별 채팅 방 목록)
-// 새로운 그룹 채팅을 생성할 수 있는 모달 여는 버튼
+// 현재 사용자가 대화 중인 대화 목록 (개인, 그룹)
 
 "use client"
 
@@ -23,12 +22,12 @@ interface ConversationListProps {
 
 // props: layout
 // initialItems: 대화 항목들
-// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 사용)
+// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 모달에서 사용자 목록 조회 용도)
 export default function ConversationList({ initialItems, users }: ConversationListProps) {
 
     // 대화 목록
     const [items, setItems] = useState(initialItems);
-    // 모달 열림 (그룹 대화 생성용)
+    // 모달 열림 (그룹 대화 생성 용도)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const session = useSession();
@@ -36,23 +35,28 @@ export default function ConversationList({ initialItems, users }: ConversationLi
     const { conversationId, isOpen } = useConversation();
 
     // 현재 사용자의 이메일을 pusher 채널 키로 사용
+    // 대화 생성, 메세지 업데이트, 대화 삭제 시 현재 사용자의 이메일 기반의 pusher 채널에 알림
     const pusherKey = useMemo(() => {
         return session.data?.user?.email;
     }, [session.data?.user?.email]);
 
 
-
+    // useEffect: 이벤트(대화 생성, 메세지 업데이트, 대화 삭제)를 ui에 즉시 반영
     useEffect(() => {
+        // 현재 사용자(session.data?.user?.email)가 로그인 하지 않은 경우
         if (!pusherKey) {
             return;
         }
 
+        // pusherKey(현재 사용자 이메일)로 채널 구독
+        // 이벤트 처리(대화 생성, 메세지 업데이트, 대화 삭제)하고 알림 보내는 용도
         pusherClient.subscribe(pusherKey);
 
-        // 새 대화 채팅방 추가 될 시 호출되는 핸들러 (group 1, group 2 ...)
+        // 새 대화 채팅방 추가 함수
         const newHandler = (conversation: FullConversationType) => {
             setItems((current) => {
                 // 이미 존재하는 대화면 아무 작업 하지 않음
+                // current = conversation.id
                 if (find(current, { id: conversation.id })) {
                     return current;
                 }
@@ -65,41 +69,41 @@ export default function ConversationList({ initialItems, users }: ConversationLi
             })
         };
 
-        // 개별 대화 메세지가 업데이트 될 시 호출되는 핸들러 (안녕 -> 반가워 -> 뭐하니(최신))
+        // 채팅방 내 메세지 업데이트 함수 (안녕 -> 반가워 -> 뭐하니(최신))
         const updateHandler = (conversation: FullConversationType) => {
             setItems((current) => current.map((currentConversation) => {
-                // 새 메세지가 추가되거나 업데이트 될 시
+                // 해당 채팅 방 내에서(currentConversation.id === conversation.id) 새 메세지가 추가되거나 업데이트 될 시
                 if (currentConversation.id === conversation.id) {
+                    // 대화 메세지 목록을 최신 상태로 갱신
                     return {
                         ...currentConversation,
-                        // 새 메세지 목록으로 업데이트
                         messages: conversation.messages
                     }
                 }
-                // 변경이 없으면 그대로 반환
                 return currentConversation;
             }))
         }
 
-        // 대화(채팅 방)가 삭제될 시 호출되는 핸들러
+        // 대화(채팅 방) 삭제 함수
         const removeHandler = (conversation: FullConversationType) => {
             setItems((current) => {
-                // 삭제된 대화를 목록에서 제거
+                // 삭제된 대화(conversation.id)를 목록(convo)에서 제거
                 return [...current.filter((convo) => convo.id !== conversation.id)]
             });
 
-            // 삭제된 대화가 현재 열려있는 대화라면 대화 목록 페이지로 이동
+            // 삭제된 대화(conversation.id)가 현재 열려있는 대화(conversationId)라면 대화 목록 페이지(/conversations)로 이동
             if (conversationId === conversation.id) {
                 router.push('/conversations');
             };
         };
 
         // pusher 이벤트 바인딩
+        // 현재 사용자 이메일 기반한 pusher에 이벤트 알림 보내기 위한 핸들러(newHandler)와 이벤트(conversation:new) 바인딩
         pusherClient.bind('conversation:new', newHandler);
         pusherClient.bind('conversation:update', updateHandler);
         pusherClient.bind('conversation:remove', removeHandler);
 
-        // 컴포넌트가 언마운트 될 시 pusher 이벤트 핸들러 해제하고 -> 채널 구독 취소
+        // 컴포넌트가 언마운트 될 시 pusher 이벤트 핸들러 해제하고 채널 구독 취소 (불필요한 메모리 사용 방지)
         return () => {
             pusherClient.unsubscribe(pusherKey);
             pusherClient.unbind('conversation:new', newHandler);
@@ -110,6 +114,7 @@ export default function ConversationList({ initialItems, users }: ConversationLi
 
     return (
         <>
+            {/* 그룹 채팅 생성 모달 */}
             <GroupChatModal
                 users={users} 
                 isOpen={isModalOpen}
@@ -129,6 +134,7 @@ export default function ConversationList({ initialItems, users }: ConversationLi
                         </div>
                     </div>
                     {items.map((item) => (
+                        // 개별 대화 항목
                         <ConversationBox
                             key={item.id} 
                             data={item} 
