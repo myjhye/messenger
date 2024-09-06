@@ -21,12 +21,14 @@ interface SettingsModalProps {
 };
 
 // props: DesktopSidebar
+// currentUser: 현재 사용자 정보
+// isOpen, onClose: 모달 여닫기
 export default function SettingsModal({ currentUser, isOpen, onClose }: SettingsModalProps) {
     
+    // 라우터 (페이지 리프레시 용도)
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
-    // 폼 상태 관리
     const {
         register,
         handleSubmit,
@@ -38,11 +40,10 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
     } = useForm<FieldValues>({
         defaultValues: {
             name: currentUser?.name,
-            //image: currentUser?.image,
         }
     });
 
-    // 이미지 필드에서 현재 이미지 값 가져오기
+    // 이미지 필드에서 현재 이미지 값 가져오기 (새로 설정하는 이미지, 업데이트된 이미지 반영)
     const image = watch('image');
 
     // 이미지 업로드 함수
@@ -52,14 +53,12 @@ export default function SettingsModal({ currentUser, isOpen, onClose }: Settings
         })
     }
 
-    // 폼 제출 함수
-    // useForm으로 입력 필드 값들 자동 수집해 간단 처리
+    // 폼 제출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
         
         axios.post('/api/settings', data)
             .then(() => {
-                router.refresh();
                 onClose();
             })
             .catch(() => toast.error('Something went wrong!'))

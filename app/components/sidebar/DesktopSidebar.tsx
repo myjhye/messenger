@@ -13,14 +13,16 @@ interface DesktopSidebarProps {
     currentUser: User | null
 }
 
-// currentUser: Sidebar
+// currentUser: Sidebar (현재 사용자 정보)
 export default function DesktopSidebar({ currentUser }: DesktopSidebarProps) {
+    // navbar 항목
     const routes = useRoutes();
+    // 프로필 모달 열기
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
-            {/* 프로필 설정 모달 (클릭 시 조회) */}
+            {/* 프로필 설정 모달 (클릭 시 호출) */}
             <SettingsModal
                 currentUser={currentUser}
                 isOpen={isOpen}
@@ -33,6 +35,7 @@ export default function DesktopSidebar({ currentUser }: DesktopSidebarProps) {
                         role='list'
                         className="flex flex-col items-center space-y-1"
                     >
+                        {/* navbar 항목 */}
                         {routes.map((item) => (
                             <DesktopItem
                                 key={item.label}
@@ -47,6 +50,7 @@ export default function DesktopSidebar({ currentUser }: DesktopSidebarProps) {
                 </nav>
                 {/* 하단 */}
                 <nav className="mt-4 flex flex-col justify-between items-center">
+                    {/* 프로필 (클릭 시 프로필 설정 모달 호출) */}
                     <div 
                         onClick={() => setIsOpen(true)}
                         className="cursor-pointer hover:opacity-75 transtion"

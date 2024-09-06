@@ -1,4 +1,5 @@
 // 새 메세지 저장
+// 기존 메세지 수정
 
 import { NextResponse } from "next/server";
 import getCurrentUser from "@/app/actions/getCurrentUser";

@@ -1,4 +1,4 @@
-// 새 그룹 대화를 생성하는 모달
+// 채팅방 생성 모달
 
 "use client"
 
@@ -20,7 +20,7 @@ interface GroupChatModalProps {
 }
 
 // props: ConversationList
-// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 사용)
+// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 모달에서 사용자 목록 조회 용도)
 export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModalProps) {
 
     const router = useRouter();
@@ -43,15 +43,17 @@ export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModa
 
     const members = watch('members');
 
+    // 폼 제출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
 
+        // 서버로 폼 데이터(name, members) 전송해 그룹 대화 생성
         axios.post('/api/conversations', {
             ...data,
+            // 그룹 대화 생성임을 명시
             isGroup: true
         })
         .then(() => {
-            router.refresh();
             onClose();
         })
         .catch(() => toast.error('Something went wrong!'))
@@ -73,6 +75,7 @@ export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModa
                             Create a chat with more than 2 people
                         </p>
                         <div className="mt-10 flex flex-col gap-y-8">
+                            {/* 그룹 이름 입력 필드 */}
                             <Input 
                                 label="Name"
                                 id="name"
@@ -81,6 +84,7 @@ export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModa
                                 errors={errors}
                                 disabled={isLoading}
                             />
+                            {/* 그룹 멤버 선택 필드 */}
                             <Select 
                                 disabled={isLoading}
                                 label="Members"
@@ -91,12 +95,14 @@ export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModa
                                 onChange={(value) => setValue('members', value, {
                                     shouldValidate: true
                                 })}
+                                // 선택된 멤버 값
                                 value={members}
                             />
                         </div>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-end gap-x-6">
+                    {/* 취소 버튼 */}
                     <Button
                         disabled={isLoading}
                         onClick={onClose}
@@ -105,6 +111,7 @@ export default function GroupChatModal({ isOpen, onClose, users }: GroupChatModa
                     >
                         Cancel
                     </Button>
+                    {/* 그룹 생성 버튼 */}
                     <Button
                         disabled={isLoading}
                         type="submit"

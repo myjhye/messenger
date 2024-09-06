@@ -1,4 +1,5 @@
-// 현재 사용자가 참여한 모든 대화 목록 조회 (현재 사용자가 속한 대화방 목록 표시 용도)
+// 현재 사용자가 참여한 모든 대화 목록 조회 
+// 현재 사용자가 속한 대화방 목록 표시 용도
 
 import prisma from "@/app/libs/prismadb"
 import getCurrentUser from "./getCurrentUser"
@@ -12,7 +13,7 @@ export default async function getConversations() {
     }
 
     try {
-        // 대화 목록 조회 (현재 사용자가 포함된, 최신순)
+        // 대화 목록 조회
         const conversations = await prisma.conversation.findMany({
             // 최신순
             orderBy: {
@@ -24,9 +25,7 @@ export default async function getConversations() {
                     has: currentUser.id
                 }
             },
-            // 추가로 조회하는 데이터
-            // 대화에 포함된 모든 사용자들 정보 (프로필, 이름 등)
-            // 메세지 발신자 정보, 메세지 본 사용자들 정보 ()
+            // 모든 대화 참여자들, 메세지 발신자, 메세지 본 사용자들 정보 포함  
             include: {
                 users: true,
                 messages: {

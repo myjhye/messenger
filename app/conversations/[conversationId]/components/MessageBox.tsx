@@ -19,8 +19,7 @@ interface MessageBoxProps {
   onDelete: (id: string) => void;
 }
 
-// props: Body
-// data: 대화에 속한 모든 메세지
+// props: Body (대화에 속한 모든 메세지)
 export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) {
   const session = useSession();
   // 메세지 편집 상태

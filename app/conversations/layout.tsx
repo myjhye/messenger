@@ -8,10 +8,11 @@ import getAllUsersExceptMe from "../actions/getAllUsersExceptMe";
 
 export default async function ConversationsLayout({ children }: { children: React.ReactNode }) {
 
-    // 대화 목록 (현재 사용자 포함된)
+    // 대화 목록 (현재 사용자 포함)
     const conversations = await getConversations();
 
-    // 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 모달에서 사용자 목록 조회 용도)
+    // 현재 사용자 제외한 모든 사용자 목록
+    // 그룹 채팅 생성 모달에서 사용자 목록 조회 용도
     const users = await getAllUsersExceptMe();
 
     return (

@@ -1,4 +1,4 @@
-// 로딩 스피너 모달
+// 로딩 스피너 모달 (ClipLoader 사용)
 
 "use client"
 

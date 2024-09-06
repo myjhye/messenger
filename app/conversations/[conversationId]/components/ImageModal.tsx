@@ -1,4 +1,4 @@
-// 이미지 클릭 시 뜨는 이미지 모달
+// 이미지 모달 (이미지 메세지 클릭 시 표시)
 
 "use client"
 
@@ -12,6 +12,7 @@ interface ImageModalProps {
 };
 
 // props: MessageBox
+// src: 이미지 url
 export default function ImageModal({ src, isOpen, onClose }: ImageModalProps) {
 
     if (!src) {

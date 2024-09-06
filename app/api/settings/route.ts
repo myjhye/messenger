@@ -14,7 +14,7 @@ export async function POST(request: Request) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        // 프로필 업데이트
+        //* 프로필 업데이트
         const updatedUser = await prisma.user.update({
             where: {
                 id: currentUser.id
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
             data: {
                 // 새 이미지 url
                 image: image,
+                // 새 사용자 이름
                 name: name,
             },
         });

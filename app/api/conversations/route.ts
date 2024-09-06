@@ -24,70 +24,63 @@ export async function POST(request: Request) {
             name: 그룹 대화 이름
         */
 
-        // 사용자 로그인 유무 확인
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
         // 그룹 대화 생성 시 필수 데이터 유효성 검사
-        // 그룹 대화가 true가 아니고, 멤버 정보가 없거나, 멤버 수가 2명 미만이거나, 그룹 이름 미제공 시
+        // 그룹 대화(isGroup)일 경우 다음 조건 만족해야 함 -> 멤버 정보가 없거나, 멤버 수가 2명 미만이거나, 그룹 이름 미제공 시 에러
         if (isGroup && (!members || members.length < 2 || !name)) {
             return new NextResponse('Invalid data', { status: 400 });
         }
 
-        //** 1. 그룹 대화 생성
+        //* 1. 그룹 대화 생성
         if (isGroup) {
             const newConversation = await prisma.conversation.create({
                 data: {
                     // 그룹 이름
                     name: name,
-                    // 그룹 대화 여부
+                    // 그룹 대화
                     isGroup: true,
                     users: {
                         connect: [
-                            // 그룹 멤버들(나 제외) 연결
+                            // 그룹 대화 참여자들(members) 연결
                             ...members.map((member: Member) => ({
                                 id: member.value
                             })),
+                            // 현재 사용자도 연결
                             {
-                                // 현재 사용자도 그룹 멤버로 연결
                                 id: currentUser.id
                             }
                         ]
                     }
                 },
                 include: {
-                    // 대화에 참여하는 모든 사용자들 정보(프로필, 이름, 이메일 등) 포함
-                    // 대화 화면에 대화 참여자들 정보(프로필, 이름) 표시 용도 
+                    // 모든 대화 참여자들 정보 포함 (알림 전송, 정보 표시 용도)
                     users: true
                 }
             });
 
-            // pusher로 모든 대화 참여자들(newConversation.users)에게 대화 생성 알림 전송
+            // 모든 대화 참여자들(newConversation.users)에게 대화 생성 알림 전송 (pusher 사용)
             newConversation.users.forEach((user) => {
                 if (user.email) {
-                    // user.email: 모든 대화 참여자들
-                    // conversation:new 이벤트 이름
-                    // newConversation: 생성된 대화 정보
                     pusherServer.trigger(user.email, 'conversation:new', newConversation);
                 }
             })
-
             // 생성된 대화 정보를 json 형식으로 클라이언트에 전달
             return NextResponse.json(newConversation);
         }
 
 
-        //** 2. 기존 개인 대화 조회 (기존 대화 찾기 -> 없으면 새로 생성)
-        // 현재 사용자와 상대방 사용자 간의 기존 대화 존재 여부 확인
+        //* 2. 기존 개인 대화 조회 (기존 대화 찾기 -> 없으면 새로 생성)
         // 결과 값: 해당 사용자와의 대화 객체 (기존 대화 존재 시), [] (기존 대화 미존재 시) 
         const exisitingConversation = await prisma.conversation.findMany({
             where: {
                 OR: [
+                    // 현재 사용자와 상대방 사용자 일치 여부
                     {
                         userIds: {
                             equals: [
-                                // 현재 사용자와 상대방 사용자 일치 여부
                                 currentUser.id, 
                                 userId,
                             ]
@@ -112,7 +105,7 @@ export async function POST(request: Request) {
             return NextResponse.json(singleConversation);
         }
 
-        //** 3. 새 개인 대화 생성
+        //* 3. 새 개인 대화 생성
         const newConversation = await prisma.conversation.create({
             data: {
                 users: {
@@ -129,13 +122,12 @@ export async function POST(request: Request) {
                 }
             },
             include: {
-                // 모든 대화 참여자들 정보 포함 (프로필, 이름 등)
-                // 대화 화면에 표시 용도 (프로필, 이름)
+                // 모든 대화 참여자들 정보 포함 (알림 전송, 정보 표시 용도)
                 users: true
             }
         });
 
-        // pusher로 모든 대화 참여자들(newConversation.users)에게 대화 생성 알림 전송
+        // 모든 대화 참여자들(newConversation.users)에게 대화 생성 알림 전송 (pusher 사용)
         newConversation.users.forEach((user) => {
             if (user.email) {
                 pusherServer.trigger(user.email, 'conversation:new', newConversation);

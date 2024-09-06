@@ -21,13 +21,13 @@ interface ConversationListProps {
 }
 
 // props: layout
-// initialItems: 대화 항목들
-// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 시 모달에서 사용자 목록 조회 용도)
+// initialItems: 대화 목록 (현재 사용자 포함)
+// users: 현재 사용자 제외한 모든 사용자 목록 (그룹 채팅 생성 모달에서 사용자 목록 조회 용도)
 export default function ConversationList({ initialItems, users }: ConversationListProps) {
 
     // 대화 목록
     const [items, setItems] = useState(initialItems);
-    // 모달 열림 (그룹 대화 생성 용도)
+    // 모달 열림 (그룹 채팅 생성 모달)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const session = useSession();
@@ -35,7 +35,6 @@ export default function ConversationList({ initialItems, users }: ConversationLi
     const { conversationId, isOpen } = useConversation();
 
     // 현재 사용자의 이메일을 pusher 채널 키로 사용
-    // 대화 생성, 메세지 업데이트, 대화 삭제 시 현재 사용자의 이메일 기반의 pusher 채널에 알림
     const pusherKey = useMemo(() => {
         return session.data?.user?.email;
     }, [session.data?.user?.email]);
@@ -52,7 +51,7 @@ export default function ConversationList({ initialItems, users }: ConversationLi
         // 이벤트 처리(대화 생성, 메세지 업데이트, 대화 삭제)하고 알림 보내는 용도
         pusherClient.subscribe(pusherKey);
 
-        // 새 대화 채팅방 추가 함수
+        // 1. 새 대화 채팅방 추가 함수
         const newHandler = (conversation: FullConversationType) => {
             setItems((current) => {
                 // 이미 존재하는 대화면 아무 작업 하지 않음
@@ -60,7 +59,6 @@ export default function ConversationList({ initialItems, users }: ConversationLi
                 if (find(current, { id: conversation.id })) {
                     return current;
                 }
-
                 return [
                     // 새 대화를 기존 대화 목록 앞에 추가
                     conversation,
@@ -69,7 +67,7 @@ export default function ConversationList({ initialItems, users }: ConversationLi
             })
         };
 
-        // 채팅방 내 메세지 업데이트 함수 (안녕 -> 반가워 -> 뭐하니(최신))
+        // 2. 채팅방 내 메세지 업데이트 함수 (안녕 -> 반가워 -> 뭐하니(최신))
         const updateHandler = (conversation: FullConversationType) => {
             setItems((current) => current.map((currentConversation) => {
                 // 해당 채팅 방 내에서(currentConversation.id === conversation.id) 새 메세지가 추가되거나 업데이트 될 시
@@ -84,7 +82,7 @@ export default function ConversationList({ initialItems, users }: ConversationLi
             }))
         }
 
-        // 대화(채팅 방) 삭제 함수
+        // 3. 대화(채팅 방) 삭제 함수
         const removeHandler = (conversation: FullConversationType) => {
             setItems((current) => {
                 // 삭제된 대화(conversation.id)를 목록(convo)에서 제거

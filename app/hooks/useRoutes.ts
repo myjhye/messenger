@@ -1,4 +1,4 @@
-// navbar 요소 (커스텀 훅: 재사용 함수)
+// navbar 항목 (커스텀 훅: 재사용 함수)
 
 import { usePathname } from "next/navigation"
 import useConversation from "./useConversation";
