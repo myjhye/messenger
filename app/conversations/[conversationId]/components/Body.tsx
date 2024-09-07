@@ -39,7 +39,7 @@ export default function Body({ initialMessages = [] }: BodyProps) {
     // pusher 채널 구독
     pusherClient.subscribe(conversationId);
 
-    //* 새 메세지 도착 시 실행
+    //* 새 메세지 도착 시 실행 핸들러 (pusher)
     const messageHandler = (message: FullMessageType) => {
       // 마지막 메세지를 읽음 상태로 표시
       axios.post(`/api/conversations/${conversationId}/seen`);
@@ -57,17 +57,20 @@ export default function Body({ initialMessages = [] }: BodyProps) {
       }
     };
 
-    //* 메세지 업데이트 시 실행
+    //* 기존 메세지 수정 시 실행 핸들러 (pusher)
     const updateMessageHandler = (newMessage: FullMessageType) => {
+      // 기존 메세지 목록(currentMessage.id)에서 수정된 메세지(newMessage.id) 찾아 업데이트
       setMessages((current) => current.map((currentMessage) => {
         if (currentMessage.id === newMessage.id) {
+          // 수정된 메세지로 교체
           return newMessage;
         }
+        // 다른 메세지는 그대로 유지
         return currentMessage;
       }));
     };
 
-    //* 메세지 삭제 시 실행 (pusher)
+    //* 메세지 삭제 시 실행 핸들러 (pusher)
     const deleteMessageHandler = ({ messageId }: { messageId: string }) => {
       setMessages((current) => current.filter((message) => message.id !== messageId));
     };
@@ -98,7 +101,7 @@ export default function Body({ initialMessages = [] }: BodyProps) {
           // 마지막 메세지
           isLast={i === messages.length - 1}
           key={message.id}
-          // 메세지
+          // 메세지 내용
           data={message}
           // 메세지 삭제 핸들러
           onDelete={handleDelete}

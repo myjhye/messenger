@@ -31,7 +31,7 @@ export default async function ConversationId({ params }: { params: IParams }) {
 
     return (
         <div className="lg:pl-80 h-full">
-            {/* MessageProvider: 메세지 컨텍스트 */}
+            {/* MessageProvider: 메세지 수정 컨텍스트 */}
             <MessageProvider> 
                 <div className="h-full flex flex-col">
                     {/* 대화 헤더 */}

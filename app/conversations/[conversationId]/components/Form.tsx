@@ -14,8 +14,9 @@ import { useEffect } from "react";
 import { useMessage } from "@/app/context/MessageContext";
 
 export default function Form() {
-    // 현재 대화 ID
+    // 현재 대화 id
     const { conversationId } = useConversation();
+    // 메세지 수정 컨텍스트
     const { editMessage, setEditMessage, editMessageId, setEditMessageId } = useMessage();
   
     const {
@@ -29,20 +30,20 @@ export default function Form() {
       },
     });
   
-    // editMessage 값이 변경될 때마다 메세지 입력 필드를 수정 중인 메세지 내용을 설정
+    // editMessage 값이 변경될 때마다 메세지 입력 필드에 수정 중인 메세지 내용 설정
     useEffect(() => {
       if (editMessage) {
         setValue("message", editMessage);
       }
     }, [editMessage, setValue]);
   
-    // 폼 제출 함수 
+    // 폼 제출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
       const payload = {
-        // message
         ...data,
+        // 현재 대화 id
         conversationId,
-        // 메시지 ID 추가
+        // 수정할 메세지 id
         messageId: editMessageId,  
       };
 
@@ -54,10 +55,10 @@ export default function Form() {
       // 수정 중인 메세지 내용 초기화
       setEditMessage("");
 
-      // 수정 중인 메세지 ID 초기화
+      // 수정 중인 메세지 id 초기화
       setEditMessageId(null);
 
-      // 서버에 메세지 전송
+      // 서버에 메세지 전송 요청
       axios.post("/api/messages", payload);
     };
   
@@ -71,7 +72,7 @@ export default function Form() {
       });
     };
   
-    // 수정 취소 함수
+    // 메세지 수정 취소 함수
     const handleCancelEdit = () => {
       setEditMessage("");
       setEditMessageId(null);
@@ -90,6 +91,7 @@ export default function Form() {
               <span className="text-blue-500 font-semibold">
                 Editing
               </span>
+              {/* 수정할 메시지 원본 */}
               <span className="text-gray-700 block">
                 {editMessage}
               </span>

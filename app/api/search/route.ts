@@ -1,16 +1,18 @@
-// 사용자가 입력한 검색어를 기반으로 대화 메세지 검색
+// 대화 메세지 검색 (사용자가 입력한 검색어 기반)
+// 관련 메세지 목록 클라이언트에 반환
 
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/libs/prismadb';
 import OpenAI from 'openai';
 import getCurrentUser from '@/app/actions/getCurrentUser';
 
+// openai 인스턴스
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// 1. 클라이언트가 검색 요청 보내기
-
+// searchTerm: 검색어
+// messageContent: 사용자가 참여한 대화 내 메세지 전체 목록
 async function evaluateMessage(searchTerm: string, messageContent: string): Promise<boolean> {
 
   const completion = await openai.chat.completions.create({
@@ -18,7 +20,7 @@ async function evaluateMessage(searchTerm: string, messageContent: string): Prom
     messages: [
       {
         role: "system",
-        // 검색어가 메세지와 관련 있는지 평가
+        // 검색어가 메세지와 관련 있는지 평가 (true/false)
         content: `
           You are a helpful assistant. Determine if the following message is discussing the topic: "${searchTerm}".
           Reply with "true" if it is related to the topic, otherwise reply with "false".
@@ -26,6 +28,7 @@ async function evaluateMessage(searchTerm: string, messageContent: string): Prom
       },
       {
         role: "user",
+        // 검색어와 비교할 사용자 메세지 목록
         content: messageContent,
       },
     ],
@@ -36,18 +39,18 @@ async function evaluateMessage(searchTerm: string, messageContent: string): Prom
   return responseContent === 'true';
 }
 
+
 export async function POST(req: NextRequest) {
-  // 2. 검색어 추출
+  // 사용자가 입력한 검색어
   const { searchTerm } = await req.json();
   
   try {
-    // 3. 현재 사용자 정보 확인
     const currentUser = await getCurrentUser();
     if (!currentUser) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // 4. 사용자가 참여한 대화를 데이터베이스에서 검색
+    //* 현재 사용자가 참여한 모든 대화 조회
     const userConversations = await prisma.conversation.findMany({
       where: {
         users: {
@@ -66,15 +69,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 5. 모든 메세지 수집
+    //* 검색된 대화 내 모든 메세지 조회
     const messages = userConversations.flatMap(conversation => conversation.messages);
 
-    // 6. 메세지 평가 준비
     const relatedMessages: any[] = [];
-    // 7. GPT를 사용하여 각 메시지가 검색어와 관련이 있는지 평가
+    //* GPT로 각 메시지가 검색어와 관련이 있는지 평가(evaluateMessage)
     for (const message of messages) {
-      // 메시지가 null이 아닌지 확인
       if (message.body && await evaluateMessage(searchTerm, message.body)) {
+        //* 관련 메세지들(message.body)을 관련 메세지 목록(relatedMessages)에 추가
         relatedMessages.push({
           // 메세지 내용
           body: message.body,
@@ -82,12 +84,12 @@ export async function POST(req: NextRequest) {
           senderName: message.sender.name,
           // 메세지 생성 시간
           createdAt: message.createdAt,
-          // 대화 ID
+          // 대화 id
           conversationId: message.conversationId, 
         });
       }
     }
-    // 8. 평가된 메세지 반환
+    // 검색된 관련 메세지들 클라이언트에 반환 (json 형태)
     return NextResponse.json(relatedMessages);
   } catch (error) {
     console.error('Error searching messages:', error);
