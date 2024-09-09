@@ -30,6 +30,23 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    if (!data) return;
+
+    // 메뉴 외부 클릭 시 메뉴 닫기
+    function handleClickOutside(event: MouseEvent) {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            setMenuOpen(false);
+        }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef, data]);
+
   if (!data) {
     return null;
   }
@@ -67,22 +84,6 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     !menuOpen && "hidden group-hover:block"
   );
 
-  
-  useEffect(() => {
-    // 메뉴 외부 클릭 시 메뉴 닫기
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef]);
-
   // 수정/삭제 버튼 클릭 시 상태 토글
   const handleHamburgerClick = () => {
     setMenuOpen((prev) => !prev);
@@ -118,7 +119,6 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     }
     setMenuOpen(false);
   };
-  
 
   return (
     <div className={container}>
