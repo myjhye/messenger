@@ -61,23 +61,22 @@ export default function AuthForm({ variant, setVariant }: AuthFormProps) {
     // 폼 제출
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
-
         // 회원가입
         if (variant === 'REGISTER') {
             // data: register에 등록된 필드 값들
             axios.post('/api/register', data)
                 // 가입 후 자동 로그인
-                // credentials: 이메일, 비밀번호 사용한 로그인
+                // credentials: 이메일, 비밀번호 사용한 로그인 방식
                 .then(() => signIn('credentials', data))
                 .catch(() => toast.error('Something went wrong!'))
                 .finally(() => setIsLoading(false))
         }
-
         // 로그인
         if (variant === 'LOGIN') {
             // signIn 사용(회원가입처럼 api url 방식 X, 기본 제공 함수) 
             signIn('credentials', {
                 // 입력한 이메일, 비밀번호 (register에 등록된 필드 값)
+                // 위 로그인과는 다르게 '...data' 스프레드 연산자 사용 이유: 'redirect: false' 설정 위해서
                 ...data,
                 // 로그인 후 다른 화면으로 이동 X
                 redirect: false,

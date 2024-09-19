@@ -18,10 +18,10 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { userId, isGroup, members, name } = body;
         /*
-            userId: 상대방 사용자 ID
+            userId: 상대방 userid (개인 대화)
             isGroup: 그룹 대화 여부 (true/false)
-            members: 그룹 대화 참여 사용자들의 ID 목록
-            name: 그룹 대화 이름
+            members: 사용자들 userid (그룹 대화, isGroup이 true일 때만 유효)
+            name: 그룹 대화 이름 (isGroup이 true일 때만 유효)
         */
 
         if (!currentUser?.id || !currentUser?.email) {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         }
 
         // 그룹 대화 생성 시 필수 데이터 유효성 검사
-        // 그룹 대화(isGroup)일 경우 다음 조건 만족해야 함 -> 멤버 정보가 없거나, 멤버 수가 2명 미만이거나, 그룹 이름 미제공 시 에러
+        // 그룹 대화(isGroup)일 경우 -> 멤버 데이터 미제공, 멤버 수가 2명 미만, 그룹 이름 미제공 시 에러
         if (isGroup && (!members || members.length < 2 || !name)) {
             return new NextResponse('Invalid data', { status: 400 });
         }
@@ -122,7 +122,7 @@ export async function POST(request: Request) {
                 }
             },
             include: {
-                // 모든 대화 참여자들 정보 포함 (알림 전송, 정보 표시 용도)
+                // 모든 대화 참여자들(상대 사용자들, 현재 사용자) 정보 포함 (알림 전송, 정보 표시 용도)
                 users: true
             }
         });

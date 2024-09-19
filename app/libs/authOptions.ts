@@ -39,6 +39,7 @@ export const authOptions: AuthOptions = {
             },
 
             // (3)단계에서 입력받은 이메일과 비밀번호로 로그인 처리
+            // credentials: 입력받은 이메일과 비밀번호
             async authorize(credentials) {
                 // 이메일과 비밀번호 미입력 시 에러
                 if (!credentials?.email || !credentials?.password) {

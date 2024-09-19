@@ -1,4 +1,5 @@
-// 현재 사용자 정보 (서버 세션 정보(getSessions) 사용)
+// 현재 사용자 정보 화면 표시 (ex. 프로필 페이지)
+// 서버 세션 정보(getSessions) 사용
 
 import prisma from "@/app/libs/prismadb";
 import getSession from "./getSession";

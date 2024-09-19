@@ -68,7 +68,7 @@ export async function POST(request: Request) {
               id: currentUser.id,
             },
           },
-          // 메세지 보낸 사람을 바로 seen 목록에 추가 (발신자는 메세지 바로 본 것으로 간주)
+          // 메세지 보낸 사람을 바로 seen 목록에 추가 (발신자는 메세지를 바로 본 것으로 간주)
           seen: {
             connect: {
               id: currentUser.id,

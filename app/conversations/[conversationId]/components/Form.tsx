@@ -33,18 +33,20 @@ export default function Form() {
     // editMessage 값이 변경될 때마다 메세지 입력 필드에 수정 중인 메세지 내용 설정
     useEffect(() => {
       if (editMessage) {
+        // id="message"
         setValue("message", editMessage);
       }
     }, [editMessage, setValue]);
   
-    // 폼 제출
+    // 폼 제출 (메세지 생성, 메세지 수정)
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
       const payload = {
+        // message (입력 필드에 작성한 텍스트)
         ...data,
         // 현재 대화 id
         conversationId,
-        // 수정할 메세지 id
-        messageId: editMessageId,  
+        // 수정할 메세지 id (수정 시)
+        messageId: editMessageId,
       };
 
       // 메세지 입력 필드 초기화
@@ -81,6 +83,7 @@ export default function Form() {
   
     return (
       <div className="py-4 px-4 bg-white border-t flex flex-col gap-2 w-full">
+        {/* 수정할 메시지 원본 */}
         {editMessage && (
           <div className="flex items-center bg-gray-100 p-2 rounded-md">
             <HiPencil 

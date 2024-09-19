@@ -51,10 +51,10 @@ export default function MessageBox({ data, isLast, onDelete }: MessageBoxProps) 
     return null;
   }
 
-  // 현재 사용자가 메세지 발신자인지 여부
+  // 메세지 발신자가 현재 사용자인지 여부
   const isOwn = session?.data?.user?.email === data.sender.email;
 
-  // 해당 메세지를 본 사용자 목록 (현재 사용자 제외)
+  // 해당 메세지를 본 사용자 이름 목록 (현재 사용자 제외)
   const seenList = (data.seen || [])
     .filter((user) => user.email !== data.sender.email)
     .map((user) => user.name)
